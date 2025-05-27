@@ -24,6 +24,10 @@ public class PsuService {
         return psuRepository.findById(id).orElse(null);
     }
 
+    public List<Psu> getPsuByWattageGreaterThanEqual(Integer wattage) {
+        return psuRepository.findByWattageGreaterThanEqual(wattage);
+    }
+
     public void insertPsu(Psu psu) {
         psuRepository.save(psu);
     }

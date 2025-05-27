@@ -24,6 +24,13 @@ public class CpuCoolerService {
         return cpuCoolerRepository.findById(id).orElse(null);
     }
 
+    public List<CpuCooler> getCpuCoolersByTowerHeight(Integer towerHeight) {
+        return cpuCoolerRepository.findByTowerHeightLessThanEqual(towerHeight);
+    }
+
+    public List<CpuCooler> getCpuCoolersByCoolingCapacity(Integer coolingCapacity) {
+        return cpuCoolerRepository.findByCoolingCapacityIsGreaterThanEqual(coolingCapacity);
+    }
     public void insertCpuCooler(CpuCooler cpuCooler) {
         cpuCoolerRepository.save(cpuCooler);
     }

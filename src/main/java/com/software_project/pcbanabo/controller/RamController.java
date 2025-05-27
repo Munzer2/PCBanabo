@@ -29,4 +29,9 @@ public class RamController {
     public Ram getRamById(@PathVariable Long id) {
         return ramService.getRamById(id);
     }
+
+    @GetMapping("/mem_type/{memType}")
+    public List<Ram> getRamsByMemType(@PathVariable String memType) {
+        return ramService.getRamsByMemType(memType);
+    }
 }

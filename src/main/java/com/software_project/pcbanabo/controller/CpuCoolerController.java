@@ -29,4 +29,14 @@ public class CpuCoolerController {
     public CpuCooler getCpuCoolerById(@PathVariable Long id) {
         return cpuCoolerService.getCpuCoolerById(id);
     }
+
+    @GetMapping("/tower_height/{towerHeight}")
+    public List<CpuCooler> getCpuCoolersByTowerHeight(@PathVariable Integer towerHeight) {
+        return cpuCoolerService.getCpuCoolersByTowerHeight(towerHeight);
+    }
+
+    @GetMapping("/cooling_capacity/{coolingCapacity}")
+    public List<CpuCooler> getCpuCoolersByCoolingCapacity(@PathVariable Integer coolingCapacity) {
+        return cpuCoolerService.getCpuCoolersByCoolingCapacity(coolingCapacity);
+    }
 }

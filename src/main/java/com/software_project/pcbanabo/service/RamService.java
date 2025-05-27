@@ -24,6 +24,10 @@ public class RamService {
         return ramRepository.findById(id).orElse(null);
     }
 
+    public List<Ram> getRamsByMemType(String memType) {
+        return ramRepository.findByMemType(memType);
+    }
+
     public void insertRam(Ram ram) {
         ramRepository.save(ram);
     }
