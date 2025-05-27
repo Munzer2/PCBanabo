@@ -10,7 +10,8 @@ public class Ram {
     private Long id;
     private String brand_name;
     private String model_name;
-    private String mem_type;
+    @Column(name = "mem_type")
+    private String memType;
     private String capacity;
     private int speed;
     private String timings;
@@ -42,12 +43,12 @@ public class Ram {
         this.model_name = model_name;
     }
 
-    public String getMem_type() {
-        return mem_type;
+    public String getMemType() {
+        return memType;
     }
 
-    public void setMem_type(String mem_type) {
-        this.mem_type = mem_type;
+    public void setMemType(String mem_type) {
+        this.memType = mem_type;
     }
 
     public String getCapacity() {

@@ -24,6 +24,14 @@ public class MotherboardService {
         return motherboardRepository.findById(id).orElse(null);
     }
 
+    public List<Motherboard> getMotherboardsBySocket(String socketName) {
+        return motherboardRepository.findBySocket(socketName);
+    }
+
+    public List<Motherboard> getMotherboardsByFormFactor(String formFactor) {
+        return motherboardRepository.findByFormFactor(formFactor);
+    }
+
     public void insertMotherboard(Motherboard motherboard) {
         motherboardRepository.save(motherboard);
     }

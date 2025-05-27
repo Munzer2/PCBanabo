@@ -25,8 +25,18 @@ public class MotherboardController {
         return motherboardService.getAllMotherboards();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public Motherboard getMotherboardById(@PathVariable Long id) {
         return motherboardService.getMotherboardById(id);
+    }
+
+    @GetMapping("/socket/{socket}")
+    public List<Motherboard> getMotherboardsBySocket(@PathVariable String socket) {
+        return motherboardService.getMotherboardsBySocket(socket);
+    }
+
+    @GetMapping("/form_factor/{formFactor}")
+    public List<Motherboard> getMotherboardsByFormFactor(@PathVariable String formFactor) {
+        return motherboardService.getMotherboardsByFormFactor(formFactor);
     }
 }

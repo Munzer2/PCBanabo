@@ -11,7 +11,9 @@ public class Motherboard {
     private String brand_name;
     private String model_name;
     private String chipset;
-    private String form_factor;
+    private String socket;
+    @Column(name = "form_factor")
+    private String formFactor;
     private String mem_type;
     private int mem_slot;
     private Integer max_mem_speed;
@@ -62,12 +64,20 @@ public class Motherboard {
         this.chipset = chipset;
     }
 
-    public String getForm_factor() {
-        return form_factor;
+    public String getSocket() {
+        return socket;
     }
 
-    public void setForm_factor(String form_factor) {
-        this.form_factor = form_factor;
+    public void setSocket(String socket) {
+        this.socket = socket;
+    }
+
+    public String getFormFactor() {
+        return formFactor;
+    }
+
+    public void setFormFactor(String formFactor) {
+        this.formFactor = formFactor;
     }
 
     public String getMem_type() {

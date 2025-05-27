@@ -29,4 +29,9 @@ public class PsuController {
     public Psu getPsuById(@PathVariable Long id) {
         return psuService.getPsuById(id);
     }
+
+    @GetMapping("/wattage/{wattage}")
+    public List<Psu> getPsuByWattageGreaterThanEqual(@PathVariable Integer wattage) {
+        return psuService.getPsuByWattageGreaterThanEqual(wattage);
+    }
 }

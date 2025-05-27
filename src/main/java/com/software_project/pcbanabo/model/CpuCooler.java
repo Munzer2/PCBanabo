@@ -12,9 +12,11 @@ public class CpuCooler {
     private String model_name;
     private String socket_support;
     private String cooler_type;
-    private Integer tower_height;
+    @Column(name = "tower_height")
+    private Integer towerHeight;
     private Integer radiator_size;
-    private Integer cooling_capacity;
+    @Column(name = "cooling_capacity")
+    private Integer coolingCapacity;
     private Integer ram_clearance;
     private String color;
     private Boolean rgb;
@@ -62,12 +64,12 @@ public class CpuCooler {
         this.cooler_type = cooler_type;
     }
 
-    public Integer getTower_height() {
-        return tower_height;
+    public Integer getTowerHeight() {
+        return towerHeight;
     }
 
-    public void setTower_height(Integer tower_height) {
-        this.tower_height = tower_height;
+    public void setTowerHeight(Integer tower_height) {
+        this.towerHeight = tower_height;
     }
 
     public Integer getRadiator_size() {
@@ -78,12 +80,12 @@ public class CpuCooler {
         this.radiator_size = radiator_size;
     }
 
-    public Integer getCooling_capacity() {
-        return cooling_capacity;
+    public Integer getCoolingCapacity() {
+        return coolingCapacity;
     }
 
-    public void setCooling_capacity(Integer cooling_capacity) {
-        this.cooling_capacity = cooling_capacity;
+    public void setCoolingCapacity(Integer cooling_capacity) {
+        this.coolingCapacity = cooling_capacity;
     }
 
     public Integer getRam_clearance() {
