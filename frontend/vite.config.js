@@ -13,7 +13,8 @@ export default defineConfig({
       // proxy API calls to backend
       '/auth': 'http://localhost:8080',
       '/users': 'http://localhost:8080',
-      '/components': 'http://localhost:8080'
+      '/components': 'http://localhost:8080',
+      '/auth/register': 'http://localhost:8080'
     }
   },
   build: {

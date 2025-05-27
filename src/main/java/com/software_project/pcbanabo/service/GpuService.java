@@ -24,6 +24,10 @@ public class GpuService {
         return gpuRepository.findById(id).orElse(null);
     }
 
+    public List<Gpu> getGpusByCardLengthLessThanEqual(int cardLength) {
+        return gpuRepository.findByCardLengthLessThanEqual(cardLength);
+    }
+
     public void insertGpu(Gpu gpu) {
         gpuRepository.save(gpu);
     }

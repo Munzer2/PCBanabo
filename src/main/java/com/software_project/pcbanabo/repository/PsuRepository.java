@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PsuRepository extends JpaRepository<Psu, Long> {
     List<Psu> findByWattageGreaterThanEqual(Integer wattage);
+    List<Psu> findByPsuLengthLessThanEqual(Integer psuLength);
 }

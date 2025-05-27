@@ -34,4 +34,9 @@ public class PsuController {
     public List<Psu> getPsuByWattageGreaterThanEqual(@PathVariable Integer wattage) {
         return psuService.getPsuByWattageGreaterThanEqual(wattage);
     }
+
+    @GetMapping("/psu_length/{length}")
+    public List<Psu> getPsuByPsuLengthLessThanEqual(@PathVariable Integer length) {
+        return psuService.getPsuByPsuLengthLessThanEqual(length);
+    }
 }

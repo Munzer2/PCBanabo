@@ -29,4 +29,9 @@ public class GpuController {
     public Gpu getGpuById(@PathVariable Long id) {
         return gpuService.getGpuById(id);
     }
+
+    @GetMapping("/card_length/{length}")
+    public List<Gpu> getGpusByCardLengthLessThanEqual(@PathVariable int length) {
+        return gpuService.getGpusByCardLengthLessThanEqual(length);
+    }
 }
