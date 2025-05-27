@@ -15,7 +15,8 @@ public class Gpu {
     private int tdp;
     private String power_connector_type;
     private int power_connector_count;
-    private int card_length;
+    @Column(name = "card_length")
+    private int cardLength;
     private int card_height;
     private int card_thickness;
     private Boolean rgb;
@@ -86,12 +87,12 @@ public class Gpu {
         this.power_connector_count = power_connector_count;
     }
 
-    public int getCard_length() {
-        return card_length;
+    public int getCardLength() {
+        return cardLength;
     }
 
-    public void setCard_length(int card_length) {
-        this.card_length = card_length;
+    public void setCardLength(int card_length) {
+        this.cardLength = card_length;
     }
 
     public int getCard_height() {

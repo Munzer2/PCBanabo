@@ -43,4 +43,16 @@ public class MotherboardService {
     public void updateMotherboard(Motherboard motherboard, Long id) {
         motherboardRepository.save(motherboard);
     }
+
+    public List<Motherboard> getFilteredMotherboards(String socket, String formFactor) {
+        if (socket != null && formFactor != null) {
+            return motherboardRepository.findBySocketAndFormFactor(socket, formFactor);
+        } else if (socket != null) {
+            return motherboardRepository.findBySocket(socket);
+        } else if (formFactor != null) {
+            return motherboardRepository.findByFormFactor(formFactor);
+        } else {
+            return motherboardRepository.findAll();
+        }
+    }
 }

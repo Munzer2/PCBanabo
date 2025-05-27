@@ -3,10 +3,7 @@ package com.software_project.pcbanabo.controller;
 import com.software_project.pcbanabo.model.Motherboard;
 import com.software_project.pcbanabo.service.MotherboardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +21,20 @@ public class MotherboardController {
     public List<Motherboard> getAllMotherboards() {
         return motherboardService.getAllMotherboards();
     }
+
+    /*
+    The following API endpoint's
+    Usage: /filtered?socket=<val>&formFactor=<val>
+    */
+
+    @GetMapping("/filtered")
+    public List<Motherboard> getMotherboards(
+            @RequestParam(required = false) String socket,
+            @RequestParam(required = false) String formFactor
+    ) {
+        return motherboardService.getFilteredMotherboards(socket, formFactor);
+    }
+
 
     @GetMapping("/id/{id}")
     public Motherboard getMotherboardById(@PathVariable Long id) {

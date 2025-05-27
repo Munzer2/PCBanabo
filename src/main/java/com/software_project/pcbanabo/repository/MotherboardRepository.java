@@ -10,4 +10,5 @@ import java.util.List;
 public interface MotherboardRepository extends JpaRepository<Motherboard, Long> {
     List<Motherboard> findBySocket(String socket);
     List<Motherboard> findByFormFactor(String formFactor);
+    List<Motherboard> findBySocketAndFormFactor(String socket, String formFactor);
 }

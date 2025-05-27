@@ -12,7 +12,8 @@ public class Psu {
     private String model_name;
     private String form_factor;
     private int wattage;
-    private int psu_length;
+    @Column(name = "psu_length")
+    private int psuLength;
     private int eps_connectors;
     private int pcie_8pin_connectors;
     private int pcie_16pin_connectors;
@@ -61,12 +62,12 @@ public class Psu {
         this.wattage = wattage;
     }
 
-    public int getPsu_length() {
-        return psu_length;
+    public int getPsuLength() {
+        return psuLength;
     }
 
-    public void setPsu_length(int psu_length) {
-        this.psu_length = psu_length;
+    public void setPsuLength(int psu_length) {
+        this.psuLength = psu_length;
     }
 
     public int getEps_connectors() {

@@ -10,10 +10,14 @@ public class Casing {
     private Long id;
     private String brand_name;
     private String model_name;
-    private String motherboard_support;
-    private int psu_clearance;
-    private int gpu_clearance;
-    private int cpu_clearance;
+    @Column(name = "motherboard_support")
+    private String motherboardSupport;
+    @Column(name = "psu_clearance")
+    private int psuClearance;
+    @Column(name = "gpu_clearance")
+    private int gpuClearance;
+    @Column(name = "cpu_clearance")
+    private int cpuClearance;
     private String top_rad_support;
     private String bottom_rad_support;
     private String side_rad_support;
@@ -48,36 +52,36 @@ public class Casing {
         this.model_name = model_name;
     }
 
-    public String getMotherboard_support() {
-        return motherboard_support;
+    public String getMotherboardSupport() {
+        return motherboardSupport;
     }
 
-    public void setMotherboard_support(String motherboard_support) {
-        this.motherboard_support = motherboard_support;
+    public void setMotherboardSupport(String motherboard_support) {
+        this.motherboardSupport = motherboard_support;
     }
 
-    public int getPsu_clearance() {
-        return psu_clearance;
+    public int getPsuClearance() {
+        return psuClearance;
     }
 
-    public void setPsu_clearance(int psu_clearance) {
-        this.psu_clearance = psu_clearance;
+    public void setPsuClearance(int psu_clearance) {
+        this.psuClearance = psu_clearance;
     }
 
-    public int getGpu_clearance() {
-        return gpu_clearance;
+    public int getGpuClearance() {
+        return gpuClearance;
     }
 
-    public void setGpu_clearance(int gpu_clearance) {
-        this.gpu_clearance = gpu_clearance;
+    public void setGpuClearance(int gpu_clearance) {
+        this.gpuClearance = gpu_clearance;
     }
 
-    public int getCpu_clearance() {
-        return cpu_clearance;
+    public int getCpuClearance() {
+        return cpuClearance;
     }
 
-    public void setCpu_clearance(int cpu_clearance) {
-        this.cpu_clearance = cpu_clearance;
+    public void setCpuClearance(int cpu_clearance) {
+        this.cpuClearance = cpu_clearance;
     }
 
     public String getTop_rad_support() {
