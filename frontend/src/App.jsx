@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
+import Configurator from './pages/Configurator';
 
 function App() {
   useLocation();                         // this makes App re-render on route changes
@@ -21,6 +22,10 @@ function App() {
       <Route
         path="/dashboard"
         element={token ? <Dashboard /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="/configurator"
+        element={token ? <Configurator /> : <Navigate to="/login" replace />}
       />
       <Route
         path="*"
