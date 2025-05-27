@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
 import Configurator from './pages/Configurator';
 
+import Casing from './pages/lists/Casing';
+
 function App() {
   useLocation();                         // this makes App re-render on route changes
   const token = localStorage.getItem('token');
@@ -23,13 +25,20 @@ function App() {
         path="/dashboard"
         element={token ? <Dashboard /> : <Navigate to="/login" replace />}
       />
+
+      <Route 
+        path="/components/casing"
+        element={token ? <Casing /> : <Navigate to="/login" replace />}
+      />
+
+
       <Route
         path="/configurator"
         element={token ? <Configurator /> : <Navigate to="/login" replace />}
       />
       <Route
         path="*"
-        element={<Navigate to={token ? '/dashboard' : '/login'} replace />}
+        element={<Navigate to={token ? "/dashboard" : "/login"} replace />}
       />
     </Routes>
   );

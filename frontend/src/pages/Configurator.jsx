@@ -7,7 +7,7 @@ import FilterSidebar from '../components/configurator/FilterSidebar';
 import ComponentSlot from '../components/configurator/ComponentSlot';
 
 const initialComponents = {
-  case: null,
+  casing: null,
   cpu: null,
   cpuCooler: null,
   gpu: null,
@@ -78,8 +78,6 @@ export default function Configurator() {
 
   return (
     <div className="min-h-screen flex bg-gray-50 text-gray-800">
-      {/* Filter Sidebar */}
-      <FilterSidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
