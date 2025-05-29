@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { Computer, ArrowLeft, User, LogOut, Save } from 'lucide-react';
-import FilterSidebar from '../components/configurator/FilterSidebar';
 import ComponentSlot from '../components/configurator/ComponentSlot';
 
 const initialComponents = {
