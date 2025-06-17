@@ -29,12 +29,10 @@ export default function Signup() {
         'Registration failed. Please try again.'
       );
     }
-  };
-
-  return (
+  };  return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <h1 className="text-2xl font-bold text-white mb-6 text-center">
           Create your account
         </h1>
 
