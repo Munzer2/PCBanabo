@@ -17,6 +17,11 @@ public class WebDriverConfig {
 
         // 2. Now create your headless Chrome instance
         ChromeOptions opts = new ChromeOptions();
+        String chromeBinary = System.getenv("CHROME_BINARY_PATH");
+        if (chromeBinary != null && !chromeBinary.isEmpty())
+        {
+            opts.setBinary(chromeBinary);
+        }
         opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
         return new ChromeDriver(opts);
     }
