@@ -2,7 +2,6 @@
 package com.software_project.pcbanabo.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/chat")
-@PreAuthorize("isAuthenticated()")
+// @PreAuthorize("isAuthenticated()")
 public class ChatController {
 
   private final ChatService chatService;
@@ -30,6 +29,7 @@ public class ChatController {
   /// extracts the message using req.message() and passes it to the chatService.ask() method
   @PostMapping
   public ResponseEntity<ChatResponse> chat(@RequestBody @Valid ChatRequest req) {
+    // System.out.println("Received chat request: " + req.message());
     if(req.message() == null || req.message().isBlank()) {
       return ResponseEntity.badRequest().body(new ChatResponse("Message cannot be empty."));
     }

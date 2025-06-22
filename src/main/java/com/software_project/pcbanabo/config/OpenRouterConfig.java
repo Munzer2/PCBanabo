@@ -20,9 +20,9 @@ public class OpenRouterConfig {
     @Value("${openrouter.api.key}")
     private String apiKey;
 
-
     @Bean
     public WebClient openRouterClient(WebClient.Builder builder) {
+        // System.out.println("OpenRouterConfig: baseUrl = " + baseUrl);
         return builder
         .baseUrl(baseUrl)
         .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)

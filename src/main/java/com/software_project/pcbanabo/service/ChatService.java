@@ -41,6 +41,7 @@ public class ChatService {
     if (resp == null || resp.choices().isEmpty())
       return "Sorry, I couldn't get a reply.";
 
+    System.out.println("GPT said :  " + resp.choices().get(0).message().content());
     return resp.choices().get(0).message().content();
   }
 }
