@@ -17,7 +17,7 @@ public class WebDriverConfig {
 
         // 2. Now create your headless Chrome instance
         ChromeOptions opts = new ChromeOptions();
-        opts.addArguments("--headless", "--disable-gpu", "--no-sandbox");
+        opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
         return new ChromeDriver(opts);
     }
 }
