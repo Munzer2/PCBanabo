@@ -1,0 +1,66 @@
+name: Basic CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: docker.io
+  DOCKERHUB_USERNAME: your_dockerhub_username
+  IMAGE_BACKEND: your_dockerhub_username/pcbanabo-backend
+  IMAGE_FRONTEND: your_dockerhub_username/pcbanabo-frontend
+
+jobs:
+
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_BACKEND }}:latest
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_FRONTEND }}:latest
+
+  deploy:
+    name: Deploy to Remote VM
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: SSH and deploy on VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ env.IMAGE_BACKEND }}:latest
+            docker pull ${{ env.IMAGE_FRONTEND }}:latest
+            docker-compose down
+            docker-compose up -d --build
