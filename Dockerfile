@@ -10,17 +10,7 @@ FROM eclipse-temurin:24-jdk
 # Set work directory
 WORKDIR /app
 
-# # Install Chrome & dependencies
-# RUN apt-get update
-# RUN apt-get install -y wget unzip curl gnupg ca-certificates chromium chromium-driver
-# RUN ln -sf /usr/bin/chromium-browser /usr/bin/chromium
-# RUN ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
-# RUN chmod +x /usr/bin/chromedriver
-# RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Install dependencies
-# RUN apt-get update && apt-get install -y wget unzip curl gnupg ca-certificates fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 \
-#     libgdk-pixbuf2.0-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 xdg-utils libu2f-udev libvulkan1
 RUN apt-get update && apt-get install -y wget unzip curl gnupg ca-certificates fonts-liberation jq
 
 # Install Google Chrome

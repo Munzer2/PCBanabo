@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'
 
+const isDocker = process.env.DOCKER === 'true';
+
 export default defineConfig({
   plugins: [
     react(),
@@ -12,10 +14,9 @@ export default defineConfig({
     port: 3000,
     proxy: {
       // proxy API calls to backend
-      '/auth': 'http://localhost:8080',
-      '/users': 'http://localhost:8080',
-      '/components': 'http://localhost:8080',
-      '/auth/register': 'http://localhost:8080'
+      '/auth': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
+      '/users': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
+      '/components': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
     }
   },
   build: {
