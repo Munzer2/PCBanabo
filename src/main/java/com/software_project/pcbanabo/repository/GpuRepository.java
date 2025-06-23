@@ -1,12 +1,15 @@
 package com.software_project.pcbanabo.repository;
 
-import com.software_project.pcbanabo.model.Gpu;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.software_project.pcbanabo.model.Gpu;
 
 @Repository
 public interface GpuRepository extends JpaRepository<Gpu, Long> {
     List<Gpu> findByCardLengthLessThanEqual(int cardLength);
+    Optional<Gpu> findByModelName(String modelName);
 }

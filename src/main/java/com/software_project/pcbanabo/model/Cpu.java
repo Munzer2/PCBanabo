@@ -1,15 +1,25 @@
 package com.software_project.pcbanabo.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "cpu")
+@Table(
+    name = "cpu",
+    uniqueConstraints=@UniqueConstraint(columnNames = "model_name")
+    )
 public class Cpu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String brand_name;
-    private String model_name;
+    @Column(name = "model_name", nullable = false)
+    private String modelName;
     private String sku_number;
     private String socket;
     private int tdp;
@@ -36,11 +46,11 @@ public class Cpu {
     }
 
     public String getModel_name() {
-        return model_name;
+        return modelName;
     }
 
     public void setModel_name(String model_name) {
-        this.model_name = model_name;
+        this.modelName = model_name;
     }
 
     public String getSku_number() {

@@ -1,11 +1,13 @@
 package com.software_project.pcbanabo.service;
 
-import com.software_project.pcbanabo.model.Gpu;
-import com.software_project.pcbanabo.repository.GpuRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.software_project.pcbanabo.model.Gpu;
+import com.software_project.pcbanabo.repository.GpuRepository;
 
 @Service
 public class GpuService {
@@ -18,6 +20,10 @@ public class GpuService {
 
     public List<Gpu> getAllGpus() {
         return gpuRepository.findAll();
+    }
+
+    public Optional<Gpu> getGpuByModelName(String modelName) {
+        return gpuRepository.findByModelName(modelName); 
     }
 
     public Gpu getGpuById(Long id) {

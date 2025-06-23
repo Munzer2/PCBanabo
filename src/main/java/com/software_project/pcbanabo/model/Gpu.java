@@ -1,6 +1,11 @@
 package com.software_project.pcbanabo.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "gpu")
@@ -9,7 +14,8 @@ public class Gpu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String brand_name;
-    private String model_name;
+    @Column(name = "model_name", nullable = false)
+    private String modelName;
     private String gpu_core;
     private int vram;
     private int tdp;
@@ -40,11 +46,11 @@ public class Gpu {
     }
 
     public String getModel_name() {
-        return model_name;
+        return modelName;
     }
 
-    public void setModel_name(String model_name) {
-        this.model_name = model_name;
+    public void setModel_name(String modelName) {
+        this.modelName = modelName;
     }
 
     public String getGpu_core() {
