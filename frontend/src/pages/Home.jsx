@@ -2,14 +2,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import { loadSlim } from "tsparticles-slim"; // Using slim version
 import { FaCog, FaRocket } from 'react-icons/fa';
 
 export default function Home() {
   const navigate = useNavigate();
 
   const particlesInit = async (main) => {
-    await loadFull(main);
+    await loadSlim(main); // Using slim loader
   };
 
   return (
@@ -45,7 +45,9 @@ export default function Home() {
             number: { value: 50 },
             opacity: { value: 0.3 },
             shape: { type: "circle" },
-            size: { value: { min: 1, max: 3 } }
+            size: { value: { min: 1, max: 3 } },
+            reduceDuplicates: true,
+            zIndex: { value: -1 }
           },
           detectRetina: true
         }}
@@ -82,7 +84,7 @@ export default function Home() {
         </div>
 
         <p className="mt-10 text-sm text-gray-600 italic">
-          "The last PC you'll ever spec wrong." – anonymous gamer
+          Stand against pedophilia and child exploitation. Join us in making the internet a safer place.
         </p>
       </div>
     </div>
