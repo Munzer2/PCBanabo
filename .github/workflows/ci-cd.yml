@@ -60,26 +60,27 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 1200s
           script: |
-            echo "Pulling latest Docker images..."
+            echo -e "\033[0;36mPulling latest Docker images...\033[0m"
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
 
-            echo "Stopping and removing existing containers..."
+            echo -e "\033[0;33mStopping and removing existing containers...\033[0m"
             docker stop pcbanabo-backend || true && docker rm pcbanabo-backend || true
             docker stop pcbanabo-frontend || true && docker rm pcbanabo-frontend || true
             docker stop pcbanabo-db || true && docker rm pcbanabo-db || true
             docker stop pcbanabo-nginx || true && docker rm pcbanabo-nginx || true
 
-            echo "Cleaning up port 80 and 3000..."
+            echo -e "\033[0;31mCleaning up port 80, 3000 and 8080...\033[0m"
             sudo fuser -k 80/tcp || true
             sudo fuser -k 3000/tcp || true
+            sudo fuser -k 8080/tcp || true
 
-            echo "Creating Docker network..."
+            echo -e "\033[0;33mCreating Docker network...\033[0m"
             docker network create pcbanabo-net || true
 
-            echo "Running Docker containers..."
+            echo -e "\033[0;33mRunning Docker containers...\033[0m"
 
-            echo "Starting PostgreSQL database container..."
+            echo -e "\033[0;32mStarting PostgreSQL database container...\033[0m"
             docker run -d \
               --name pcbanabo-db \
               --restart unless-stopped \
@@ -92,7 +93,7 @@ jobs:
               -p 5432:5432 \
               postgres:16.9-alpine
 
-            echo "Starting backend container..."
+            echo -e "\033[0;36mStarting backend container...\033[0m"
             docker run -d \
               --name pcbanabo-backend \
               --restart always \
@@ -105,17 +106,14 @@ jobs:
               -p 8080:8080 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
 
-            echo "Starting frontend container..."
+            echo -e "\033[0;35mStarting frontend container...\033[0m"
             docker run -d \
               --name pcbanabo-frontend \
               --restart always \
               --network pcbanabo-net \
-              -e VITE_BACKEND_URL= \
-              -e DOCKER=True \
-              -p 3000:3000 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
 
-            echo "Starting Nginx container..."
+            echo -e "\033[0;34mStarting Nginx container...\033[0m"
             docker run -d \
               --name pcbanabo-nginx \
               --restart always \
@@ -124,4 +122,4 @@ jobs:
               -p 80:80 \
               nginx:stable-alpine
 
-            echo "Deployment completed successfully!"
+            echo -e "\033[0;32mDeployment completed successfully!\033[0m"

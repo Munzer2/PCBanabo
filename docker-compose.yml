@@ -51,14 +51,14 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - backend
-    environment:
-      VITE_BACKEND_URL: ""
-      DOCKER: "True"
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    command: ["npm", "run", "dev"]
+    # environment:
+    #   VITE_BACKEND_URL: ""
+    #   DOCKER: "True"
+    # ports:
+    #   - "3000:3000"
+    # volumes:
+    #   - ./frontend:/app
+    # command: ["npm", "run", "dev"]
 
   nginx:
     image: nginx:stable-alpine

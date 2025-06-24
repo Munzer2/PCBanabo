@@ -1,28 +1,27 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/vite';
 
 const isDocker = process.env.DOCKER === 'true';
+const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
   ],
-  server: {
+  server: isDev && {
     host: true,
     port: 3000,
     proxy: {
-      // proxy API calls to backend
       '/auth': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
       '/api/users': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
       '/api/components': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
     }
   },
   build: {
-    outDir: '../src/main/resources/static',
+    outDir: '../dist',
     emptyOutDir: true,
-    // use relative asset paths
     assetsDir: '.',
     rollupOptions: {
       output: {
