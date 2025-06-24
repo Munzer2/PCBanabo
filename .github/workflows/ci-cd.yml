@@ -57,7 +57,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 900
+          timeout: 1200s
           script: |
             echo "Pulling latest Docker images..."
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
