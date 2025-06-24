@@ -51,9 +51,9 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - backend
-    # environment:
+    environment:
+      DOCKER: "True"
     #   VITE_BACKEND_URL: ""
-    #   DOCKER: "True"
     # ports:
     #   - "3000:3000"
     # volumes:
