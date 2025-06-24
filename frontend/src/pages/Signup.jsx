@@ -38,54 +38,75 @@ export default function Signup() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
               Your name
             </label>
-            <input
-              id="name"
-              type="text"
-              value={userName}
-              onChange={e => setUserName(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md 
-                         shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 
-                         focus:border-blue-500"
-              placeholder="Jane Doe"
-            />
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>              <input
+                id="name"
+                type="text"
+                value={userName}
+                onChange={e => setUserName(e.target.value)}
+                required
+                className="w-full pl-10 pr-3 py-3 bg-[#252525] border border-[#3a3a3a] rounded-md 
+                         text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2
+                         focus:ring-[#38b2ac] focus:border-transparent"
+                placeholder="Jane Doe"
+              />
+            </div>
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
               Email address
             </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md 
-                         shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 
-                         focus:border-blue-500"
-              placeholder="you@example.com"
-            />
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                className="w-full pl-10 pr-3 py-3 bg-[#252525] border border-[#3a3a3a] rounded-md 
+                         text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2
+                         focus:ring-[#38b2ac] focus:border-transparent"
+                placeholder="you@example.com"
+              />
+            </div>
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md 
-                         shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 
-                         focus:border-blue-500"
-              placeholder="••••••••"
-            />
+            <div className="flex justify-between items-center mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+                Password
+              </label>
+              <a href="#" className="text-xs text-[#38b2ac] hover:text-[#2c9b95]">Forgot password?</a>
+            </div>
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                className="w-full pl-10 pr-3 py-3 bg-[#252525] border border-[#3a3a3a] rounded-md 
+                         text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2
+                         focus:ring-[#38b2ac] focus:border-transparent"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
 
           <button

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
@@ -16,13 +17,19 @@ function App() {
   return (
     <Routes>
       <Route
+        path="/" element={<Home />}
+      />
+      
+      <Route
         path="/login"
         element={token ? <Navigate to="/dashboard" replace /> : <Login />}
       />
+
       <Route
         path="/signup"
         element={token ? <Navigate to="/dashboard" replace /> : <Signup />}
       />
+
       <Route
         path="/dashboard"
         element={token ? <Dashboard /> : <Navigate to="/login" replace />}
@@ -42,7 +49,6 @@ function App() {
         path="/components/gpu"
         element={token ? <GPU /> : <Navigate to="/login" replace />}
       />
-
 
       <Route
         path="/configurator"
