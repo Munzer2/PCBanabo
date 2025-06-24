@@ -93,6 +93,12 @@ jobs:
               -p 5432:5432 \
               postgres:16.9-alpine
 
+            
+            echo -e "\033[0;33mWaiting for database to be ready...\033[0m"
+            until docker exec pcbanabo-db pg_isready -U ${{ secrets.DATABASE_USERNAME }}; do
+              sleep 1
+            done
+
             echo -e "\033[0;36mStarting backend container...\033[0m"
             docker run -d \
               --name pcbanabo-backend \
