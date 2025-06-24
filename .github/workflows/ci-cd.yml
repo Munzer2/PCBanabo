@@ -27,7 +27,6 @@ jobs:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-
       - name: Build and push backend image
         uses: docker/build-push-action@v5
         with:
@@ -61,5 +60,55 @@ jobs:
           script: |
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
-            docker-compose down
-            docker-compose up -d --build
+
+            docker stop pcbanabo-backend || true && docker rm pcbanabo-backend || true
+            docker stop pcbanabo-frontend || true && docker rm pcbanabo-frontend || true
+            docker stop pcbanabo-db || true && docker rm pcbanabo-db || true
+            docker stop pcbanabo-nginx || true && docker rm pcbanabo-nginx || true
+
+            docker network create pcbanabo-net || true
+
+            # Run PostgreSQL DB
+            docker run -d \
+              --name pcbanabo-db \
+              --restart unless-stopped \
+              --network pcbanabo-net \
+              -e POSTGRES_DB=pcbanabo \
+              -e POSTGRES_USER=${{ secrets.DATABASE_USERNAME}} \
+              -e POSTGRES_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+              -v pgdata:/var/lib/postgresql/data \
+              -v /home/pcbanabo/db-init:/docker-entrypoint-initdb.d \
+              -p 5432:5432 \
+              postgres:16.9-alpine
+
+            # Run backend
+            docker run -d \
+              --name pcbanabo-backend \
+              --restart always \
+              --network pcbanabo-net \
+              -e SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }} \
+              -e SPRING_DATASOURCE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+              -e CHROME_BINARY_PATH=/usr/bin/google-chrome \
+              -e CHROMEDRIVER_PATH=/usr/bin/chromedriver \
+              -p 8080:8080 \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
+
+            # Run frontend
+            docker run -d \
+              --name pcbanabo-frontend \
+              --restart always \
+              --network pcbanabo-net \
+              -e VITE_BACKEND_URL=http://pcbanabo-backend:8080 \
+              -e DOCKER=True \
+              -p 3000:3000 \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
+
+            # Run nginx
+            docker run -d \
+              --name pcbanabo-nginx \
+              --restart always \
+              --network pcbanabo-net \
+              -v /home/pcbanabo/nginx.conf:/etc/nginx/nginx.conf:ro \
+              -p 80:80 \
+              nginx:stable-alpine
