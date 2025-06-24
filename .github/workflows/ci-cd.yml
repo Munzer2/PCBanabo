@@ -8,9 +8,9 @@ on:
 
 env:
   REGISTRY: docker.io
-  DOCKERHUB_USERNAME: your_dockerhub_username
-  IMAGE_BACKEND: your_dockerhub_username/pcbanabo-backend
-  IMAGE_FRONTEND: your_dockerhub_username/pcbanabo-frontend
+  DOCKERHUB_USERNAME: dezade
+  IMAGE_BACKEND: dezade/pcbanabo-backend
+  IMAGE_FRONTEND: dezade/pcbanabo-frontend
 
 jobs:
 
