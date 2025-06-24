@@ -1,17 +1,18 @@
 package com.software_project.pcbanabo.controller;
 
-import com.software_project.pcbanabo.model.Cpu;
-import com.software_project.pcbanabo.service.CpuService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.software_project.pcbanabo.model.Cpu;
+import com.software_project.pcbanabo.service.CpuService;
 
 @RestController
-@RequestMapping("/components/cpus")
+@RequestMapping("/api/components/cpus")
 public class CpuController {
     private final CpuService cpuService;
 

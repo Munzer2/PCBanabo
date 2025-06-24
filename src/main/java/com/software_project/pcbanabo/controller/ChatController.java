@@ -31,7 +31,7 @@ public class ChatController {
   /// extracts the message using req.message() and passes it to the chatService.ask() method
   @PostMapping 
   public ResponseEntity<ChatResponse> chat(@RequestBody @Valid ChatRequest req) {
-    // System.out.println("Received chat request: " + req.message());
+    System.out.println("Received chat request: " + req.message());
     if(req.message() == null || req.message().isBlank()) {
       return ResponseEntity.badRequest().body(new ChatResponse("Message cannot be empty."));
     }

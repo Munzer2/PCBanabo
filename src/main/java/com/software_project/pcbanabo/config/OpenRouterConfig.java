@@ -24,21 +24,11 @@ public class OpenRouterConfig {
     public WebClient openRouterClient(WebClient.Builder builder) { 
         return builder
                 .baseUrl(baseUrl)
-                .defaultHeader("X-API-KEY", apiKey)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                // .defaultHeader("X-API-KEY", apiKey)
+                .defaultHeader("Authorization", "Bearer " + apiKey)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                // .filter(ExchangeFilterFunction.ofRequestProcessor(req -> {
-                //     System.out.println(">>> Request URI: " + req.url());
-                //     req.body()
-                //             .map(buffer -> {
-                //                 byte[] bytes = new byte[buffer.readableByteCount()];
-                //                 buffer.read(bytes);
-                //                 System.out.println(">>> Request Body: " + new String(bytes, UTF_8));
-                //                 return buffer;
-                //             })
-                //             .subscribe();
-                //     return Mono.just(req);
-                // }))
+                .defaultHeader("HTTP-Referer", "http://localhost:8080")
+                .defaultHeader("x-openai-compatibility", "true")
                 .build();
     }
 }

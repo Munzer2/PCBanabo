@@ -20,11 +20,12 @@ public class ChatService {
                      @Value("${openrouter.model}") String modelId) {
     this.client = openRouterClient;
     this.modelId = modelId;
+    System.out.println("🔍 OpenRouter modelId = '" + modelId + "'");
   }
 
   public String ask(String userMessage) {
     // build request payload
-    // System.out.println("ChatService: Asking model " + modelId + " with message: " + userMessage);
+    System.out.println("ChatService: Asking model " + modelId + " with message: " + userMessage);
     Map<String,Object> payload = Map.of(
       "model", modelId,
       "messages", List.of(
@@ -43,7 +44,7 @@ public class ChatService {
     if (resp == null || resp.choices().isEmpty())
       return "Sorry, I couldn't get a reply.";
 
-    // System.out.println("GPT said :  " + resp.choices().get(0).message().content());
+    System.out.println("GPT said :  " + resp.choices().get(0).message().content());
     return resp.choices().get(0).message().content();
   }
 }
