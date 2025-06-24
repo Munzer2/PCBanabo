@@ -30,8 +30,8 @@ export default function Signup() {
       );
     }
   };  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0e17]">
+      <div className="bg-[#1a1a1a] p-8 rounded-lg border border-[#2c2c2c] shadow-2xl w-full max-w-md">
         <h1 className="text-2xl font-bold text-white mb-6 text-center">
           Create your account
         </h1>
@@ -90,9 +90,9 @@ export default function Signup() {
 
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md 
-                       hover:bg-blue-700 transition focus:outline-none focus:ring-2 
-                       focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full py-3 px-4 bg-gradient-to-r from-[#38b2ac] to-[#3182ce] text-white font-medium rounded-md 
+                       hover:opacity-90 transition-all duration-300 shadow-lg
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38b2ac] focus:ring-offset-[#1a1a1a]"
           >
             Sign Up
           </button>

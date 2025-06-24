@@ -13,11 +13,20 @@ public class WebDriverConfig {
 
     @Bean
     public WebDriver webDriver() {
-        WebDriverManager.chromedriver().driverVersion("137.0.7151.69").setup();
+        String chromeBinary = System.getenv("CHROME_BINARY_PATH");
+        if (chromeBinary == null || chromeBinary.isEmpty())
+        {
+            WebDriverManager.chromedriver().driverVersion("137.0.7151.69").setup();
+        }
 
-        // 2. Now create your headless Chrome instance
         ChromeOptions opts = new ChromeOptions();
-        opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
+        if (chromeBinary != null && !chromeBinary.isEmpty())
+        {
+            opts.setBinary(chromeBinary);
+        }
+
+        // opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
+        opts.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080", "--remote-debugging-port=9222");
         return new ChromeDriver(opts);
     }
 }

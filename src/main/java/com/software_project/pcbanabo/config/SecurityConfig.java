@@ -29,7 +29,6 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userService);
@@ -37,48 +36,34 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/components/**",
-                                        "/auth/login",
-                                        "/users/**",
-                                        "/auth/register").permitAll() // Allow public access to /api endpoints
+                                "/auth/login",
+                                "/users/**",
+                                "/auth/register")
+                        .permitAll() // Allow public access to /api endpoints
                         .anyRequest().authenticated() // Everything else requires login
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-          .authenticationManager(authManager)
-          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationManager(authManager)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    //     http
-    //             .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
-    //             .authorizeHttpRequests(auth -> auth
-    //                     .requestMatchers("/components/**").permitAll() // Allow public access to /api endpoints
-    //                     .anyRequest().authenticated() // Everything else requires login
-    //             )
-    //             .httpBasic(Customizer.withDefaults()); // Optional: enable basic auth if needed
-
-    //     return http.build();
-    // }
-
-     @Bean
+    @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder builder =
-            http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userService)
-               .passwordEncoder(passwordEncoder());
+                .passwordEncoder(passwordEncoder());
         return builder.build();
     }
 
     // @Bean
     // public PasswordEncoder passwordEncoder() {
-    //     return new BCryptPasswordEncoder();
+    // return new BCryptPasswordEncoder();
     // }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
-
 }

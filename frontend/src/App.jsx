@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Configurator from './pages/Configurator';
 
 import Casing from './pages/lists/Casing';
+import CPU from './pages/lists/CPU';
 
 function App() {
   useLocation();                         // this makes App re-render on route changes
@@ -29,6 +30,11 @@ function App() {
       <Route 
         path="/components/casing"
         element={token ? <Casing /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/cpu"
+        element={token ? <CPU /> : <Navigate to="/login" replace />}
       />
 
 
