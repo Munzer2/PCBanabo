@@ -57,23 +57,28 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 900
           script: |
+            echo "Pulling latest Docker images..."
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
 
+            echo "Stopping and removing existing containers..."
             docker stop pcbanabo-backend || true && docker rm pcbanabo-backend || true
             docker stop pcbanabo-frontend || true && docker rm pcbanabo-frontend || true
             docker stop pcbanabo-db || true && docker rm pcbanabo-db || true
             docker stop pcbanabo-nginx || true && docker rm pcbanabo-nginx || true
 
-            if systemctl is-active --quiet nginx; then
-              sudo systemctl stop nginx
-              sudo systemctl disable nginx
-            fi
+            echo "Cleaning up port 80 and 3000..."
+            sudo fuser -k 80/tcp || true
+            sudo fuser -k 3000/tcp || true
 
+            echo "Creating Docker network..."
             docker network create pcbanabo-net || true
 
-            # Run PostgreSQL DB
+            echo "Running Docker containers..."
+
+            echo "Starting PostgreSQL database container..."
             docker run -d \
               --name pcbanabo-db \
               --restart unless-stopped \
@@ -86,7 +91,7 @@ jobs:
               -p 5432:5432 \
               postgres:16.9-alpine
 
-            # Run backend
+            echo "Starting backend container..."
             docker run -d \
               --name pcbanabo-backend \
               --restart always \
@@ -99,7 +104,7 @@ jobs:
               -p 8080:8080 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
 
-            # Run frontend
+            echo "Starting frontend container..."
             docker run -d \
               --name pcbanabo-frontend \
               --restart always \
@@ -109,7 +114,7 @@ jobs:
               -p 3000:3000 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
 
-            # Run nginx
+            echo "Starting Nginx container..."
             docker run -d \
               --name pcbanabo-nginx \
               --restart always \
@@ -117,3 +122,5 @@ jobs:
               -v /home/pcbanabo/nginx.conf:/etc/nginx/nginx.conf:ro \
               -p 80:80 \
               nginx:stable-alpine
+
+            echo "Deployment completed successfully!"
