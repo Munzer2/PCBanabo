@@ -66,6 +66,11 @@ jobs:
             docker stop pcbanabo-db || true && docker rm pcbanabo-db || true
             docker stop pcbanabo-nginx || true && docker rm pcbanabo-nginx || true
 
+            if systemctl is-active --quiet nginx; then
+              sudo systemctl stop nginx
+              sudo systemctl disable nginx
+            fi
+
             docker network create pcbanabo-net || true
 
             # Run PostgreSQL DB
