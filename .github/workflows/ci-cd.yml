@@ -27,14 +27,6 @@ jobs:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Debug - confirm docker login
-        run: |
-          echo "Home = $HOME"
-          echo "DOCKER_CONFIG = $DOCKER_CONFIG"
-          echo "Contents of config.json:"
-          cat "${DOCKER_CONFIG:-$HOME/.docker}/config.json"
-          echo "docker whoami:"
-          docker info --format '{{json .AuthConfig}}'
 
       - name: Build and push backend image
         uses: docker/build-push-action@v5
