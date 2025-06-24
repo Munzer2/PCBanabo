@@ -25,8 +25,8 @@ public class WebDriverConfig {
             opts.setBinary(chromeBinary);
         }
 
-        // opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
-        opts.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080", "--remote-debugging-port=9222");
+        opts.addArguments("--headless", "--disable-gpu", "--no-sandbox","--window-size=1920,1080");
+        // opts.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080", "--remote-debugging-port=9222");
         return new ChromeDriver(opts);
     }
 }

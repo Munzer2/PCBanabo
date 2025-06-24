@@ -1,17 +1,18 @@
 package com.software_project.pcbanabo.controller;
 
-import com.software_project.pcbanabo.model.Gpu;
-import com.software_project.pcbanabo.service.GpuService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.software_project.pcbanabo.model.Gpu;
+import com.software_project.pcbanabo.service.GpuService;
 
 @RestController
-@RequestMapping("/components/gpus")
+@RequestMapping("/api/components/gpus")
 public class GpuController {
     private final GpuService gpuService;
 

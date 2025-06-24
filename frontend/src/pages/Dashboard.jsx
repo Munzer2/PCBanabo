@@ -15,7 +15,7 @@ export default function Dashboard() {
     (async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) return navigate("/login", { replace: true });
-      const res = await api.get(`/users/${userId}`);
+      const res = await api.get(`/api/users/${userId}`);
       setUser(res.data);
     })();
   }, [navigate]);

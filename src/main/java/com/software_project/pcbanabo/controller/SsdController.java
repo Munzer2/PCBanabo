@@ -1,17 +1,18 @@
 package com.software_project.pcbanabo.controller;
 
-import com.software_project.pcbanabo.model.Ssd;
-import com.software_project.pcbanabo.service.SsdService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.software_project.pcbanabo.model.Ssd;
+import com.software_project.pcbanabo.service.SsdService;
 
 @RestController
-@RequestMapping("/components/ssds")
+@RequestMapping("/api/components/ssds")
 public class SsdController {
     private final SsdService ssdService;
 

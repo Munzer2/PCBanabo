@@ -15,8 +15,8 @@ export default defineConfig({
     proxy: {
       // proxy API calls to backend
       '/auth': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
-      '/users': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
-      '/components': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
+      '/api/users': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
+      '/api/components': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
     }
   },
   build: {
