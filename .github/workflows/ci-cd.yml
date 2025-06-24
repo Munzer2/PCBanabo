@@ -90,7 +90,6 @@ jobs:
               -e POSTGRES_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
               -v pgdata:/var/lib/postgresql/data \
               -v /home/pcbanabo/db-init:/docker-entrypoint-initdb.d \
-              -p 5432:5432 \
               postgres:16.9-alpine
 
             
@@ -109,7 +108,6 @@ jobs:
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
               -e CHROME_BINARY_PATH=/usr/bin/google-chrome \
               -e CHROMEDRIVER_PATH=/usr/bin/chromedriver \
-              -p 8080:8080 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_BACKEND }}:latest
 
             echo -e "\033[0;35mStarting frontend container...\033[0m"
