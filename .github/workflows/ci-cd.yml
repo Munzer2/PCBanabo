@@ -110,7 +110,7 @@ jobs:
               --name pcbanabo-frontend \
               --restart always \
               --network pcbanabo-net \
-              -e VITE_BACKEND_URL=/api \
+              -e VITE_BACKEND_URL= \
               -e DOCKER=True \
               -p 3000:3000 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
