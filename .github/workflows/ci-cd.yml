@@ -11,6 +11,7 @@ env:
   DOCKERHUB_USERNAME: dezade
   IMAGE_BACKEND: dezade/pcbanabo-backend
   IMAGE_FRONTEND: dezade/pcbanabo-frontend
+  DATABASE_URL: jdbc:postgresql://pcbanabo-db:5432/pcbanabo
 
 jobs:
   build-and-push:
@@ -96,7 +97,7 @@ jobs:
               --name pcbanabo-backend \
               --restart always \
               --network pcbanabo-net \
-              -e SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }} \
+              -e SPRING_DATASOURCE_URL=${{ env.DATABASE_URL }} \
               -e SPRING_DATASOURCE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
               -e CHROME_BINARY_PATH=/usr/bin/google-chrome \
