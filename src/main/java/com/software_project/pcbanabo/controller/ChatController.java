@@ -2,6 +2,8 @@
 package com.software_project.pcbanabo.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +18,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/chat")
-// @PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 public class ChatController {
 
   private final ChatService chatService;
@@ -27,7 +29,7 @@ public class ChatController {
 
   ///Controller method to handle chat requests
   /// extracts the message using req.message() and passes it to the chatService.ask() method
-  @PostMapping
+  @PostMapping 
   public ResponseEntity<ChatResponse> chat(@RequestBody @Valid ChatRequest req) {
     // System.out.println("Received chat request: " + req.message());
     if(req.message() == null || req.message().isBlank()) {
@@ -40,5 +42,10 @@ public class ChatController {
     String sanitizedMssg = HtmlUtils.htmlEscape(req.message()); //// Replaces special characters with HTML entities to prevent XSS attacks
     String reply = chatService.ask(sanitizedMssg);
     return ResponseEntity.ok(new ChatResponse(reply));
+  }
+
+  @GetMapping
+  public ResponseEntity<String> healthCheck() {
+    return ResponseEntity.ok("Chat API is up and running");
   }
 }

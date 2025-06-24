@@ -15,18 +15,30 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class OpenRouterConfig {
 
     @Value("${openrouter.url}")
-    private String baseUrl;  
+    private String baseUrl;
 
     @Value("${openrouter.api.key}")
     private String apiKey;
 
     @Bean
-    public WebClient openRouterClient(WebClient.Builder builder) {
-        // System.out.println("OpenRouterConfig: baseUrl = " + baseUrl);
+    public WebClient openRouterClient(WebClient.Builder builder) { 
         return builder
-        .baseUrl(baseUrl)
-        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .build();
+                .baseUrl(baseUrl)
+                .defaultHeader("X-API-KEY", apiKey)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                // .filter(ExchangeFilterFunction.ofRequestProcessor(req -> {
+                //     System.out.println(">>> Request URI: " + req.url());
+                //     req.body()
+                //             .map(buffer -> {
+                //                 byte[] bytes = new byte[buffer.readableByteCount()];
+                //                 buffer.read(bytes);
+                //                 System.out.println(">>> Request Body: " + new String(bytes, UTF_8));
+                //                 return buffer;
+                //             })
+                //             .subscribe();
+                //     return Mono.just(req);
+                // }))
+                .build();
     }
 }

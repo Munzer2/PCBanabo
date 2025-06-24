@@ -24,6 +24,7 @@ public class ChatService {
 
   public String ask(String userMessage) {
     // build request payload
+    // System.out.println("ChatService: Asking model " + modelId + " with message: " + userMessage);
     Map<String,Object> payload = Map.of(
       "model", modelId,
       "messages", List.of(
@@ -33,6 +34,7 @@ public class ChatService {
     );
 
     OpenRouterResponse resp = client.post()
+      .uri("/chat/completions")
       .bodyValue(payload)
       .retrieve()
       .bodyToMono(OpenRouterResponse.class)
@@ -41,7 +43,7 @@ public class ChatService {
     if (resp == null || resp.choices().isEmpty())
       return "Sorry, I couldn't get a reply.";
 
-    System.out.println("GPT said :  " + resp.choices().get(0).message().content());
+    // System.out.println("GPT said :  " + resp.choices().get(0).message().content());
     return resp.choices().get(0).message().content();
   }
 }
