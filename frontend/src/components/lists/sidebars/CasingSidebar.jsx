@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 
 const sliderDefaults = {
   price: [0, 2000],
@@ -76,7 +76,7 @@ export default function CasingSidebar({ onApply }) {
     const [valMin, valMax] = filters[id];
     return (
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-300 mb-1">
           {label}
         </label>
         <div className="flex items-center gap-2 mb-2">
@@ -86,18 +86,18 @@ export default function CasingSidebar({ onApply }) {
             min={min}
             max={valMax}
             onChange={(e) => handleMinMaxChange(id, 0, e.target.value)}
-            className="w-20 px-2 py-1 border rounded text-sm"
+            className="w-20 px-2 py-1 border border-gray-700 bg-gray-800 text-gray-300 rounded text-sm focus:border-blue-500 focus:outline-none"
           />
-          <span>-</span>
+          <span className="text-gray-400">-</span>
           <input
             type="number"
             value={valMax}
             min={valMin}
             max={max}
             onChange={(e) => handleMinMaxChange(id, 1, e.target.value)}
-            className="w-20 px-2 py-1 border rounded text-sm"
+            className="w-20 px-2 py-1 border border-gray-700 bg-gray-800 text-gray-300 rounded text-sm focus:border-blue-500 focus:outline-none"
           />
-          <span>{unit}</span>
+          <span className="text-gray-400">{unit}</span>
         </div>
         <input
           type="range"
@@ -105,7 +105,7 @@ export default function CasingSidebar({ onApply }) {
           max={max}
           value={valMin}
           onChange={(e) => handleMinMaxChange(id, 0, e.target.value)}
-          className="w-full"
+          className="w-full accent-blue-500"
         />
         <input
           type="range"
@@ -113,7 +113,7 @@ export default function CasingSidebar({ onApply }) {
           max={max}
           value={valMax}
           onChange={(e) => handleMinMaxChange(id, 1, e.target.value)}
-          className="w-full mt-1"
+          className="w-full mt-1 accent-blue-500"
         />
       </div>
     );
@@ -127,9 +127,9 @@ export default function CasingSidebar({ onApply }) {
             type="checkbox"
             checked={filters[id].includes(item)}
             onChange={() => handleCheckboxChange(id, item)}
-            className="h-4 w-4 text-blue-600 rounded"
+            className="h-4 w-4 text-blue-500 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-gray-800"
           />
-          <span className="text-sm text-gray-700">{item}</span>
+          <span className="text-sm text-gray-300">{item}</span>
         </label>
       ))}
     </div>
@@ -189,9 +189,9 @@ export default function CasingSidebar({ onApply }) {
                 type="checkbox"
                 checked={filters[key]}
                 onChange={() => handleSingleCheckbox(key)}
-                className="h-4 w-4 text-blue-600 rounded"
+                className="h-4 w-4 text-blue-500 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-gray-800"
               />
-              <span className="text-sm text-gray-700 capitalize">{key}</span>
+              <span className="text-sm text-gray-300 capitalize">{key}</span>
             </label>
           ))}
         </div>
@@ -200,9 +200,9 @@ export default function CasingSidebar({ onApply }) {
   ];
 
   return (
-    <aside className="w-80 bg-white border-r p-4 overflow-y-auto">
+    <aside className="w-80 bg-slate-800 border-r border-gray-700 p-4 overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+        <h2 className="text-lg font-semibold text-gray-100 flex items-center">
           <Filter className="mr-2" size={18} />
           Filter Casings
         </h2>
@@ -217,7 +217,7 @@ export default function CasingSidebar({ onApply }) {
               display: false,
             })
           }
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-blue-400 hover:text-blue-300"
         >
           Clear Filters
         </button>
@@ -227,7 +227,7 @@ export default function CasingSidebar({ onApply }) {
         <div key={section.id} className="mb-6">
           <button
             onClick={() => toggleSection(section.id)}
-            className="flex justify-between w-full text-left font-medium text-gray-700"
+            className="flex justify-between w-full text-left font-medium text-gray-300"
           >
             <span>{section.title}</span>
             {expanded[section.id] ? (
@@ -244,7 +244,7 @@ export default function CasingSidebar({ onApply }) {
 
       <button
         onClick={() => onApply(filters)}
-        className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+        className="w-full mt-6 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
       >
         Apply Filters
       </button>

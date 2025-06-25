@@ -83,9 +83,9 @@ export default function Home() {
           </button>
         </div>
 
-        <p className="mt-10 text-sm text-gray-600 italic">
+        {/* <p className="mt-10 text-sm text-gray-600 italic">
           Stand against pedophilia and child exploitation. Join us in making the internet a safer place.
-        </p>
+        </p> */}
       </div>
     </div>
   );
