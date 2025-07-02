@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.software_project.pcbanabo.model.Cpu;
@@ -27,7 +28,7 @@ public class CpuScraper {
         this.cpuService = cpuService;
     }
 
-    // @Scheduled(fixedDelayString = "${scrape.interval.ms:36000000}") // Default is 10 hours
+    @Scheduled(fixedDelayString = "${scrape.interval.ms:36000000}") // Default is 10 hours
     public void scrape() {
         scrapeCpus();
     }
