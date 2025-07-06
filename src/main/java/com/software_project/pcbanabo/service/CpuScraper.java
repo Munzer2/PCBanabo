@@ -28,7 +28,7 @@ public class CpuScraper {
         this.cpuService = cpuService;
     }
 
-    @Scheduled(fixedDelayString = "${scrape.interval.ms:36000000}") // Default is 10 hours
+    // @Scheduled(fixedDelayString = "${scrape.interval.ms:36000000}") // Default is 10 hours
     public void scrape() {
         scrapeCpus();
     }
