@@ -9,6 +9,10 @@ import Configurator from './pages/Configurator';
 import Casing from './pages/lists/Casing';
 import CPU from './pages/lists/CPU';
 import GPU from './pages/lists/GPU';
+import MotherBoard from './pages/lists/MotherBoard';
+import Ram from './pages/lists/Ram';
+import CpuCooler from './pages/lists/CpuCooler';
+import Psu from './pages/lists/Psu';
 
 function App() {
   useLocation();                         // this makes App re-render on route changes
@@ -48,6 +52,31 @@ function App() {
       <Route 
         path="/components/gpu"
         element={token ? <GPU /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/motherboard"
+        element={token ? <MotherBoard /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/ram"
+        element={token ? <Ram /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/cpu-coolers"
+        element={token ? <CpuCooler /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/psu"
+        element={token ? <Psu /> : <Navigate to="/login" replace />}
+      />
+
+      <Route 
+        path="/components/ssd"
+        element={token ? <Psu /> : <Navigate to="/login" replace />}
       />
 
       <Route
