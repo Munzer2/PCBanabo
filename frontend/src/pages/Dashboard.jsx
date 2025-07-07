@@ -118,7 +118,7 @@ export default function Dashboard() {
                   </li>
                   <li>
                     <Link
-                      to="/components/cpucooler"
+                      to="/components/cpu-coolers"
                       className="
                         block px-8 py-2 text-sm text-gray-300 
                         hover:bg-gray-700 hover:text-white
