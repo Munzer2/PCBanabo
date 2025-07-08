@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.software_project.pcbanabo.model.Psu;
@@ -39,5 +40,20 @@ public class PsuController {
     @GetMapping("/psu_length/{length}")
     public List<Psu> getPsuByPsuLengthLessThanEqual(@PathVariable Integer length) {
         return psuService.getPsuByPsuLengthLessThanEqual(length);
+    }
+
+    @GetMapping("/filtered")
+    public List<Psu> getFilteredPsus(
+            @RequestParam(required = false) String brandName,
+            @RequestParam(required = false) String formFactor,
+            @RequestParam(required = false) Integer wattageMin,
+            @RequestParam(required = false) Integer psuLengthMax,
+            @RequestParam(required = false) String certification,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        return psuService.getFilteredPsus(brandName, formFactor, wattageMin, 
+                                         psuLengthMax, certification, 
+                                         minPrice, maxPrice);
     }
 }

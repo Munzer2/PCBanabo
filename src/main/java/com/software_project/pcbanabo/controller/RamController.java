@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.software_project.pcbanabo.model.Ram;
@@ -34,5 +35,19 @@ public class RamController {
     @GetMapping("/mem_type/{memType}")
     public List<Ram> getRamsByMemType(@PathVariable String memType) {
         return ramService.getRamsByMemType(memType);
+    }
+
+    @GetMapping("/filtered")
+    public List<Ram> getFilteredRams(
+            @RequestParam(required = false) String brandName,
+            @RequestParam(required = false) String memType,
+            @RequestParam(required = false) String memCapacity,
+            @RequestParam(required = false) Integer speedMin,
+            @RequestParam(required = false) Boolean rgb,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        return ramService.getFilteredRams(brandName, memType, memCapacity, 
+                                         speedMin, rgb, minPrice, maxPrice);
     }
 }

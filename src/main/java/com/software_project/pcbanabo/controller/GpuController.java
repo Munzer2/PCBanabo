@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.software_project.pcbanabo.model.Gpu;
@@ -34,5 +35,20 @@ public class GpuController {
     @GetMapping("/card_length/{length}")
     public List<Gpu> getGpusByCardLengthLessThanEqual(@PathVariable int length) {
         return gpuService.getGpusByCardLengthLessThanEqual(length);
+    }
+
+    @GetMapping("/filtered")
+    public List<Gpu> getFilteredGpus(
+            @RequestParam(required = false) String brandName,
+            @RequestParam(required = false) String gpuCore,
+            @RequestParam(required = false) Integer vramMin,
+            @RequestParam(required = false) Integer tdpMax,
+            @RequestParam(required = false) Integer cardLengthMax,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        return gpuService.getFilteredGpus(brandName, gpuCore, vramMin, 
+                                         tdpMax, cardLengthMax, 
+                                         minPrice, maxPrice);
     }
 }

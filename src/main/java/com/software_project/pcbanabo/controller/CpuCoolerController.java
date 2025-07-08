@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.software_project.pcbanabo.model.CpuCooler;
@@ -39,5 +40,20 @@ public class CpuCoolerController {
     @GetMapping("/cooling_capacity/{coolingCapacity}")
     public List<CpuCooler> getCpuCoolersByCoolingCapacity(@PathVariable Integer coolingCapacity) {
         return cpuCoolerService.getCpuCoolersByCoolingCapacity(coolingCapacity);
+    }
+
+    @GetMapping("/filtered")
+    public List<CpuCooler> getFilteredCpuCoolers(
+            @RequestParam(required = false) String brandName,
+            @RequestParam(required = false) String coolerType,
+            @RequestParam(required = false) Integer towerHeight,
+            @RequestParam(required = false) Integer radiatorSize,
+            @RequestParam(required = false) Integer coolingCapacity,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        return cpuCoolerService.getFilteredCpuCoolers(brandName, coolerType, towerHeight, 
+                                                     radiatorSize, coolingCapacity, 
+                                                     minPrice, maxPrice);
     }
 }
