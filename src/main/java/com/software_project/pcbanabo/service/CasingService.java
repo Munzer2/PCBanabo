@@ -1,6 +1,7 @@
 package com.software_project.pcbanabo.service;
 
 import com.software_project.pcbanabo.model.Casing;
+import com.software_project.pcbanabo.model.Cpu;
 import com.software_project.pcbanabo.repository.CasingRepository;
 import com.software_project.pcbanabo.repository.MotherboardRepository;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -40,6 +42,10 @@ public class CasingService {
 
     public void updateCasing(Casing casing, Long id) {
         casingRepository.save(casing);
+    }
+
+    public Optional<Casing> getCasingByModelName(String modelName) {
+        return casingRepository.findByModelName(modelName);
     }
 
     public List<Casing> getFilteredCasings(String motherboardSupport, Integer psuClearance, Integer gpuClearance,

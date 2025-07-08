@@ -9,7 +9,8 @@ public class Casing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String brand_name;
-    private String model_name;
+    @Column(name = "model_name", nullable = false)
+    private String modelName;
     @Column(name = "motherboard_support")
     private String motherboardSupport;
     @Column(name = "psu_clearance")
@@ -45,11 +46,11 @@ public class Casing {
     }
 
     public String getModel_name() {
-        return model_name;
+        return modelName;
     }
 
     public void setModel_name(String model_name) {
-        this.model_name = model_name;
+        this.modelName = model_name;
     }
 
     public String getMotherboardSupport() {
