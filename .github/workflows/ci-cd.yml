@@ -115,6 +115,8 @@ jobs:
               --name pcbanabo-frontend \
               --restart always \
               --network pcbanabo-net \
+              --network-alias frontend \
+              -e DOCKER=True \
               ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
 
             echo -e "\033[0;34mStarting Nginx container...\033[0m"

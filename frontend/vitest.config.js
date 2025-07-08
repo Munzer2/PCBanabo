@@ -1,4 +1,4 @@
-d/vitest.config.js
+// frontend/vitest.config.js
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';

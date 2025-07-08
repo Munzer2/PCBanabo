@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, ChevronDown, ChevronUp, Filter, User, LogOut } from "lucide-react";
 import CpuCoolerItem from "../../components/lists/items/CpuCoolerItem";
 import CpuCoolerSidebar from "../../components/lists/sidebars/CpuCoolerSidebar";
@@ -10,6 +10,11 @@ export default function CpuCooler() {
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if we're coming from configurator
+  const fromConfigurator = location.state?.fromConfigurator;
+  const componentType = location.state?.componentType;
 
   // Fetch CPU Coolers
   useEffect(() => {
@@ -42,6 +47,17 @@ export default function CpuCooler() {
     // You would typically filter the CPU coolers here or make an API call with filters
   };
 
+  const handleSelectCpuCooler = (cpuCooler) => {
+    if (fromConfigurator) {
+      navigate('/configurator', {
+        state: {
+          selectedComponent: cpuCooler,
+          componentType: componentType
+        }
+      });
+    }
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login", { replace: true });
@@ -58,11 +74,11 @@ export default function CpuCooler() {
         <header className="flex justify-between items-center bg-slate-800 border-b border-gray-700 px-8 h-16 shadow-md">
           <div>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(fromConfigurator ? "/configurator" : "/dashboard")}
               className="flex items-center text-blue-400 hover:text-blue-300"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Dashboard
+              {fromConfigurator ? "Configurator" : "Dashboard"}
             </button>
           </div>
           <div className="flex gap-6">
@@ -104,7 +120,8 @@ export default function CpuCooler() {
                   <CpuCoolerItem 
                     key={cooler.id} 
                     cpuCooler={cooler}
-                    showButton={true}
+                    showButton={fromConfigurator}
+                    onSelect={() => handleSelectCpuCooler(cooler)}
                   />
                 ))}
               </div>

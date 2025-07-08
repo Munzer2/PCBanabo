@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import CasingSidebar from "../../components/lists/sidebars/CasingSidebar";
 import CasingItem from "../../components/lists/items/CasingItem";
@@ -17,6 +17,11 @@ export default function Casing() {
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if we're coming from configurator
+  const fromConfigurator = location.state?.fromConfigurator;
+  const componentType = location.state?.componentType;
 
   const buildQueryParams = (filters) => {
     const params = new URLSearchParams();
@@ -78,6 +83,17 @@ export default function Casing() {
     setFilters(newFilters);
   };
 
+  const handleSelectCasing = (casing) => {
+    if (fromConfigurator) {
+      navigate('/configurator', {
+        state: {
+          selectedComponent: casing,
+          componentType: componentType
+        }
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <CasingSidebar onApply={handleApplyFilters} />
@@ -85,11 +101,11 @@ export default function Casing() {
         <header className="flex justify-between items-center bg-slate-800 border-b border-gray-700 px-8 h-16 shadow-md">
           <div>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(fromConfigurator ? "/configurator" : "/dashboard")}
               className="flex items-center text-blue-400 hover:text-blue-300"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Dashboard
+              {fromConfigurator ? "Configurator" : "Dashboard"}
             </button>
           </div>
           <div className="flex gap-6">
@@ -123,7 +139,12 @@ export default function Casing() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {casings.map((casing) => (
-                  <CasingItem key={casing.id || casing._id} casing={casing} />
+                  <CasingItem 
+                    key={casing.id || casing._id} 
+                    casing={casing} 
+                    showButton={fromConfigurator}
+                    onSelect={() => handleSelectCasing(casing)}
+                  />
                 ))}
               </div>
             )}

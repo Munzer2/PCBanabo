@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import RamSidebar from "../../components/lists/sidebars/RamSidebar";
 import RamItem from "../../components/lists/items/RamItem";
@@ -8,8 +8,15 @@ const sliders = ["price", "speed"];
 
 export default function Ram() {
   const [rams, setRams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if we're coming from configurator
+  const fromConfigurator = location.state?.fromConfigurator;
+  const componentType = location.state?.componentType;
 
   const buildQueryParams = (filters) => {
     const params = new URLSearchParams();
@@ -69,6 +76,17 @@ export default function Ram() {
     setFilters(apiFilters);
   };
 
+  const handleSelectRam = (ram) => {
+    if (fromConfigurator) {
+      navigate('/configurator', {
+        state: {
+          selectedComponent: ram,
+          componentType: componentType
+        }
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <RamSidebar onApply={handleApplyFilters} />
@@ -76,11 +94,11 @@ export default function Ram() {
         <header className="flex justify-between items-center bg-slate-800 border-b border-gray-700 px-8 h-16 shadow-md">
           <div>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(fromConfigurator ? "/configurator" : "/dashboard")}
               className="flex items-center text-blue-400 hover:text-blue-300"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Dashboard
+              {fromConfigurator ? "Configurator" : "Dashboard"}
             </button>
           </div>
           <div className="flex gap-6">
@@ -110,7 +128,12 @@ export default function Ram() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {rams.map((ram) => (
-                  <RamItem key={ram.id || ram._id} ram={ram} showButton={true} />
+                  <RamItem 
+                    key={ram.id || ram._id} 
+                    ram={ram} 
+                    showButton={fromConfigurator}
+                    onSelect={() => handleSelectRam(ram)}
+                  />
                 ))}
               </div>
             )}
