@@ -33,11 +33,25 @@ public class MotherboardController {
     */
 
     @GetMapping("/filtered")
-    public List<Motherboard> getMotherboards(
+    public List<Motherboard> getFilteredMotherboards(
+            @RequestParam(required = false) String brandName,
+            @RequestParam(required = false) String chipset,
             @RequestParam(required = false) String socket,
-            @RequestParam(required = false) String formFactor
+            @RequestParam(required = false) String formFactor,
+            @RequestParam(required = false) String memType,
+            @RequestParam(required = false) Integer memSlotMin,
+            @RequestParam(required = false) Integer memSlotMax,
+            @RequestParam(required = false) Integer maxMemSpeedMin,
+            @RequestParam(required = false) Integer maxPowerMin,
+            @RequestParam(required = false) Integer maxPowerMax,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
     ) {
-        return motherboardService.getFilteredMotherboards(socket, formFactor);
+        return motherboardService.getFilteredMotherboards2(
+                brandName, chipset, socket, formFactor, memType,
+                memSlotMin, memSlotMax, maxMemSpeedMin,
+                maxPowerMin, maxPowerMax, minPrice, maxPrice
+        );
     }
 
 

@@ -61,18 +61,6 @@ public class CasingService {
         }
     }
 
-    public static Specification<Casing> priceBetween(Double min, Double max) {
-        return (root, query, builder) -> {
-            if (min == null && max == null)
-                return builder.conjunction();
-            if (min == null)
-                return builder.lessThanOrEqualTo(root.get("avg_price"), max);
-            if (max == null)
-                return builder.greaterThanOrEqualTo(root.get("avg_price"), min);
-            return builder.between(root.get("avg_price"), min, max);
-        };
-    }
-
     public List<Casing> getFilteredCasings2(
             Double priceMin, Double priceMax,
             Integer psuMin, Integer psuMax,
@@ -81,7 +69,8 @@ public class CasingService {
             List<String> brands, List<String> motherboardTypes, List<String> colors,
             Boolean rgb, Boolean display) {
         Specification<Casing> spec = Specification.where(null);
-        spec = spec.and(priceBetween(priceMin, priceMax));
+        // spec = spec.and(priceBetween(priceMin, priceMax));
+        spec = spec.and(rangeBetween("avg_price", priceMin, priceMax));
         spec = spec.and(rangeBetween("psuClearance", psuMin, psuMax));
         spec = spec.and(rangeBetween("gpuClearance", gpuMin, gpuMax));
         spec = spec.and(rangeBetween("cpuClearance", cpuMin, cpuMax));

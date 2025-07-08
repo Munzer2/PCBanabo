@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 
 const sliderDefaults = {
-  price: [0, 2000],
+  price: [0, 4000],
   psu: [0, 300],
   cpu: [0, 200],
   gpu: [0, 400]
@@ -15,6 +15,7 @@ const brands = [
   "Cooler Master",
   "Fractal Design",
   "Phanteks",
+  "Xtreme"
 ];
 const motherboardTypes = ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"];
 const colors = ["Black", "White", "Gray"];
@@ -135,7 +136,7 @@ export default function CasingSidebar({ onApply }) {
     {
       id: "price",
       title: "Average Price",
-      content: sliderWithInputs("price", "Price", 0, 2000, "$"),
+      content: sliderWithInputs("price", "Price", 0, 4000, "$"),
     },
     {
       id: "clearances",
