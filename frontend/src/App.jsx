@@ -13,6 +13,7 @@ import MotherBoard from './pages/lists/MotherBoard';
 import Ram from './pages/lists/Ram';
 import CpuCooler from './pages/lists/CpuCooler';
 import Psu from './pages/lists/Psu';
+import Ssd from './pages/lists/Ssd';
 
 function App() {
   useLocation();                         // this makes App re-render on route changes
@@ -65,7 +66,7 @@ function App() {
       />
 
       <Route 
-        path="/components/cpu-coolers"
+        path="/components/cpu-cooler"
         element={token ? <CpuCooler /> : <Navigate to="/login" replace />}
       />
 
@@ -76,7 +77,7 @@ function App() {
 
       <Route 
         path="/components/ssd"
-        element={token ? <Psu /> : <Navigate to="/login" replace />}
+        element={token ? <Ssd /> : <Navigate to="/login" replace />}
       />
 
       <Route

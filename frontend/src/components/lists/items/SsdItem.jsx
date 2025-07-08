@@ -1,4 +1,4 @@
-export default function SsdItem({ ssd, showButton }) {
+export default function SsdItem({ ssd, showButton, onSelect }) {
   return (
     <div className="border border-gray-700 rounded-lg p-4 shadow-md bg-slate-800 relative">
       <div className="flex flex-col space-y-1">
@@ -31,7 +31,10 @@ export default function SsdItem({ ssd, showButton }) {
       {/* Optional Button */}
       {showButton && (
         <div className="mt-4">
-          <button className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors">
+          <button 
+            onClick={onSelect}
+            className="bg-blue-700 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors"
+          >
             Select Storage
           </button>
         </div>
