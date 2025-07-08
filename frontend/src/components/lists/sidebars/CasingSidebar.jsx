@@ -5,10 +5,7 @@ const sliderDefaults = {
   price: [0, 2000],
   psu: [0, 300],
   cpu: [0, 200],
-  gpu: [0, 400],
-  radTop: [0, 360],
-  radBottom: [0, 360],
-  radSide: [0, 360],
+  gpu: [0, 400]
 };
 
 const brands = [
@@ -26,7 +23,6 @@ export default function CasingSidebar({ onApply }) {
   const [expanded, setExpanded] = useState({
     price: true,
     clearances: true,
-    radiator: true,
     brands: true,
     motherboard: true,
     color: true,
@@ -149,17 +145,6 @@ export default function CasingSidebar({ onApply }) {
           {sliderWithInputs("psu", "PSU", 0, 300)}
           {sliderWithInputs("gpu", "GPU", 0, 400)}
           {sliderWithInputs("cpu", "CPU", 0, 200)}
-        </>
-      ),
-    },
-    {
-      id: "radiator",
-      title: "Radiator Support (mm)",
-      content: (
-        <>
-          {sliderWithInputs("radTop", "Top", 0, 360)}
-          {sliderWithInputs("radBottom", "Bottom", 0, 360)}
-          {sliderWithInputs("radSide", "Side", 0, 360)}
         </>
       ),
     },

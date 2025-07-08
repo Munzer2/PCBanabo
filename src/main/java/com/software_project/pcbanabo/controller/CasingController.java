@@ -28,18 +28,42 @@ public class CasingController {
     }
 
     /*
-    The following API endpoint's
+    The following API endpoint's been changed.
     Usage: /filtered?motherboardSupport=<val>&psuClearance=<val>&...
     */
 
     @GetMapping("/filtered")
     public List<Casing> getFilteredCasings(
-            @RequestParam(required = false) String motherboardSupport,
-            @RequestParam(required = false) Integer psuClearance,
-            @RequestParam(required = false) Integer gpuClearance,
-            @RequestParam(required = false) Integer cpuClearance
+            // Price range
+        @RequestParam(required = false) Double price_gte,
+        @RequestParam(required = false) Double price_lte,
+        
+        // Clearance ranges
+        @RequestParam(required = false) Integer psu_gte,
+        @RequestParam(required = false) Integer psu_lte,
+        @RequestParam(required = false) Integer gpu_gte,
+        @RequestParam(required = false) Integer gpu_lte,
+        @RequestParam(required = false) Integer cpu_gte,
+        @RequestParam(required = false) Integer cpu_lte,
+
+        
+        // Lists of options
+        @RequestParam(required = false) List<String> brands,
+        @RequestParam(required = false) List<String> motherboard,
+        @RequestParam(required = false) List<String> color,
+        
+        // Boolean features
+        @RequestParam(required = false) Boolean rgb,
+        @RequestParam(required = false) Boolean display
             ){
-        return casingService.getFilteredCasings(motherboardSupport, psuClearance, gpuClearance, cpuClearance);
+        return casingService.getFilteredCasings2(
+            price_gte, price_lte,
+            psu_gte, psu_lte,
+            gpu_gte, gpu_lte,
+            cpu_gte, cpu_lte,
+            brands, motherboard, color,
+            rgb, display
+        );
     }
     @GetMapping("/{id}")
     public Casing getCasingById(@PathVariable Long id) {

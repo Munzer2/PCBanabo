@@ -8,14 +8,13 @@ const sliders = [
   "cpu",
   "gpu",
   "price",
-  "psu",
-  "radBottom",
-  "radSide",
-  "radTop",
+  "psu"
 ];
 
 export default function Casing() {
   const [casings, setCasings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
   const navigate = useNavigate();
 
@@ -45,18 +44,29 @@ export default function Casing() {
   useEffect(() => {
     const fetchCasings = async () => {
       try {
+        setLoading(true); 
         const query = buildQueryParams(filters);
         const url = Object.keys(filters).length
           ? `/api/components/casings/filtered?${query}`
           : `/api/components/casings`;
 
-        console.log("New API call:", url);
+        console.log("Making API call to:", url);
         const res = await fetch(url);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("API error:", res.status, errorText);
+          throw new Error(`API error: ${res.status}`);
+        }
+        
         const data = await res.json();
-        console.log("Data received from new query:", data);
+        console.log("Received data:", data.length, "items");
         setCasings(data);
+        setLoading(false); // End loading state
       } catch (error) {
         console.error("Error fetching casings:", error);
+        setError(error.message || "Failed to fetch casings");
+        setLoading(false); // End loading even on error
       }
     };
 
@@ -64,9 +74,8 @@ export default function Casing() {
   }, [filters]);
 
   const handleApplyFilters = (newFilters) => {
-    console.log("Received some new filters:", newFilters);
+    console.log("Applying new filters:", newFilters);
     setFilters(newFilters);
-    console.log("Now my filters are:", filters);
   };
 
   return (
@@ -105,7 +114,11 @@ export default function Casing() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available Casings
             </h1>
-            {casings.length === 0 ? (
+            {loading ? (
+              <p className="text-center text-gray-400">Loading casings...</p>
+            ) : error ? (
+              <p className="text-center text-red-400">{error}</p>
+            ) : casings.length === 0 ? (
               <p className="text-center text-gray-400">No casings found.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
