@@ -8,12 +8,12 @@ test.describe('Authentication Flow - Docker Environment', () => {
       const request = route.request();
       const postData = JSON.parse(request.postData());
       
-      if (postData.email === 'testuser@example.com' && postData.password === 'password123') {
+      if (postData.email === 'abul@abul.com' && postData.password === 'abul') {
         await route.fulfill({
           json: { 
             token: 'mock-jwt-token', 
             userId: '1',
-            username: 'testuser@example.com'
+            username: 'abul'
           }
         });
       } else {
@@ -37,8 +37,8 @@ test.describe('Authentication Flow - Docker Environment', () => {
   test('should login with valid credentials', async ({ page }) => {
     await page.goto('/login');
 
-    await page.fill('input[type="email"]', 'testuser@example.com');
-    await page.fill('input[type="password"]', 'password123');
+    await page.fill('input[type="email"]', 'abul@abul.com');
+    await page.fill('input[type="password"]', 'abul');
     await page.click('button[type="submit"]');
 
     // Should redirect to dashboard
@@ -74,7 +74,7 @@ test.describe('Authentication Flow - Docker Environment', () => {
     await page.click('button[type="submit"]');
 
     // Should show success message
-    await expect(page.locator('text=Registration successful')).toBeVisible();
+    await expect(page).toHaveURL('/dashboard');;
   });
 
   test('should logout user', async ({ page }) => {

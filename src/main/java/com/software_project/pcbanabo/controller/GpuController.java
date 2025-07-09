@@ -3,6 +3,7 @@ package com.software_project.pcbanabo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +29,9 @@ public class GpuController {
     }
 
     @GetMapping("/{id}")
-    public Gpu getGpuById(@PathVariable Long id) {
-        return gpuService.getGpuById(id);
+    public ResponseEntity<Gpu> getGpuById(@PathVariable Long id) {
+        Gpu gpu = gpuService.getGpuById(id);
+        return gpu != null ? ResponseEntity.ok(gpu) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/card_length/{length}")

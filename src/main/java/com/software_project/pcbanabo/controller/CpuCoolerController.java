@@ -3,12 +3,14 @@ package com.software_project.pcbanabo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.software_project.pcbanabo.model.Casing;
 import com.software_project.pcbanabo.model.CpuCooler;
 import com.software_project.pcbanabo.service.CpuCoolerService;
 
@@ -28,8 +30,9 @@ public class CpuCoolerController {
     }
 
     @GetMapping("/{id}")
-    public CpuCooler getCpuCoolerById(@PathVariable Long id) {
-        return cpuCoolerService.getCpuCoolerById(id);
+    public ResponseEntity<CpuCooler> getCpuCoolerById(@PathVariable Long id) {
+        CpuCooler c = cpuCoolerService.getCpuCoolerById(id);
+        return (c != null) ? ResponseEntity.ok(c) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/tower_height/{towerHeight}")

@@ -3,6 +3,7 @@ package com.software_project.pcbanabo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,8 +57,9 @@ public class MotherboardController {
 
 
     @GetMapping("/id/{id}")
-    public Motherboard getMotherboardById(@PathVariable Long id) {
-        return motherboardService.getMotherboardById(id);
+    public ResponseEntity<Motherboard> getMotherboardById(@PathVariable Long id) {
+        Motherboard m = motherboardService.getMotherboardById(id);
+        return m != null ? ResponseEntity.ok(m) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/socket/{socket}")

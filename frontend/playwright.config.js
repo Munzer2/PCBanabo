@@ -18,7 +18,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost',
+    baseURL: 'http://localhost:3000',
     
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -65,10 +65,26 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'docker-compose up --build',
-    url: 'http://localhost',
-    timeout: 120000,
-    reuseExistingServer: !process.env.CI,
-  },
+  // webServer: {
+  //   command: 'docker-compose up --build',
+  //   url: 'http://localhost',
+  //   timeout: 120000,
+  //   reuseExistingServer: !process.env.CI,
+  // },
+  webServer: [
+    {
+      // 1) Start your Spring-Boot API on :8080
+      command: 'mvn spring-boot:run',
+      port: 8080,
+      timeout: 120 * 1000,            // give Spring a bit more time
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      // 2) Then start your frontend dev server, e.g. Vite on :3000
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      timeout: 60 * 1000,
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });

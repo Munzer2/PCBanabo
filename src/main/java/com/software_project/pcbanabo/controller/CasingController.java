@@ -3,6 +3,7 @@ package com.software_project.pcbanabo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,7 +67,8 @@ public class CasingController {
         );
     }
     @GetMapping("/{id}")
-    public Casing getCasingById(@PathVariable Long id) {
-        return casingService.getCasingById(id);
+    public ResponseEntity<Casing> getCasingById(@PathVariable Long id) {
+        Casing c = casingService.getCasingById(id);
+        return (c != null) ? ResponseEntity.ok(c) : ResponseEntity.notFound().build();
     }
 }
