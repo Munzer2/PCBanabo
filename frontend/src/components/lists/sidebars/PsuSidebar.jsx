@@ -224,7 +224,10 @@ export default function PsuSidebar({ onApply }) {
       ))}
 
       <button
-        onClick={() => onApply(filters)}
+        onClick={() => {
+          console.log("PSU Sidebar: Apply Filters clicked with filters:", filters);
+          onApply(filters);
+        }}
         className="w-full mt-6 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
       >
         Apply Filters

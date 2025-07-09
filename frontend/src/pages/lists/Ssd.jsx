@@ -4,6 +4,12 @@ import { ArrowLeft, User, LogOut } from "lucide-react";
 import SsdItem from "../../components/lists/items/SsdItem";
 import SsdSidebar from "../../components/lists/sidebars/SsdSidebar";
 
+const sliders = [
+  "price",
+  "seqRead",
+  "seqWrite",
+];
+
 export default function Ssd() {
   const [ssds, setSsds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,18 +22,86 @@ export default function Ssd() {
   const fromConfigurator = location.state?.fromConfigurator;
   const componentType = location.state?.componentType;
 
+  const buildQueryParams = (filters) => {
+    const params = new URLSearchParams();
+
+    // Define default values to skip when they haven't been changed
+    const sliderDefaults = {
+      price: [0, 500],
+      seqRead: [500, 7000],
+      seqWrite: [400, 6000],
+    };
+
+    for (const key in filters) {
+      const value = filters[key];
+      if (sliders.includes(key)) {
+        // Only add slider params if they differ from defaults
+        const defaults = sliderDefaults[key];
+        const isDefault = defaults && value[0] === defaults[0] && value[1] === defaults[1];
+        
+        if (!isDefault) {
+          // Map frontend slider names to backend parameter names
+          if (key === 'price') {
+            params.set('minPrice', value[0]);
+            params.set('maxPrice', value[1]);
+          } else if (key === 'seqRead') {
+            params.set('seqReadMin', value[0]);
+          } else if (key === 'seqWrite') {
+            params.set('seqWriteMin', value[0]);
+          }
+        }
+      } else if (Array.isArray(value) && value.length > 0) {
+        // Map frontend array names to backend parameter names
+        if (key === 'brands' && value.length > 0) {
+          // Backend expects single brandName parameter
+          params.set('brandName', value[0]);
+        } else if (key === 'capacities' && value.length > 0) {
+          // Backend expects single capacity parameter
+          params.set('capacity', value[0]);
+        } else if (key === 'formFactors' && value.length > 0) {
+          // Backend expects single formFactor parameter
+          params.set('formFactor', value[0]);
+        } else if (key === 'pcieGens' && value.length > 0) {
+          // Backend expects single pcieGen parameter
+          params.set('pcieGen', value[0]);
+        }
+      } else if (typeof value === "boolean" && value === true) {
+        // Only add boolean params if they're true (not default false)
+        if (key === 'dramCache') {
+          params.set('dramCache', "true");
+        } else {
+          params.set(key, "true");
+        }
+      }
+    }
+
+    return params.toString();
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login", { replace: true });
+  };
+
   // Fetch SSDs
   useEffect(() => {
     const fetchSsds = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/components/ssds");
+        const query = buildQueryParams(filters);
+        const url = Object.keys(filters).length
+          ? `/api/components/ssds/filtered?${query}`
+          : `/api/components/ssds`;
+
+        console.log("Making API call to:", url);
+        const res = await fetch(url);
         
         if (!res.ok) {
           throw new Error("Failed to fetch storage devices");
         }
         
         const data = await res.json();
+        console.log("Received data:", data.length, "items");
         setSsds(data);
         setLoading(false);
       } catch (error) {
@@ -38,13 +112,12 @@ export default function Ssd() {
     };
 
     fetchSsds();
-  }, []);
+  }, [filters]);
 
   // Apply filters from the sidebar
   const handleApplyFilters = (newFilters) => {
     console.log("Applying filters:", newFilters);
     setFilters(newFilters);
-    // You would typically filter the SSDs here or make an API call with filters
   };
 
   const handleSelectSsd = (ssd) => {
@@ -56,11 +129,6 @@ export default function Ssd() {
         }
       });
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login", { replace: true });
   };
 
   return (
