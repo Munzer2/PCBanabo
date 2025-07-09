@@ -24,21 +24,77 @@ export default function CPU() {
   const componentType = location.state?.componentType;
 
   const buildQueryParams = (filters) => {
+    console.log("CPU buildQueryParams called with:", filters);
     const params = new URLSearchParams();
+
+    // Define default values to skip when they haven't been changed
+    const sliderDefaults = {
+      price: [0, 1500],
+      cores: [1, 64],
+      threads: [2, 128],
+      baseClock: [1, 5],
+      boostClock: [1, 6],
+      tdp: [10, 300],
+    };
 
     for (const key in filters) {
       const value = filters[key];
+      console.log(`CPU buildQueryParams processing key: ${key}, value:`, value);
       if (sliders.includes(key)) {
-        params.set(`${key}_gte`, value[0]);
-        params.set(`${key}_lte`, value[1]);
-      } else if (Array.isArray(value)) {
-        value.forEach((v) => params.append(key, v));
-      } else if (typeof value === "boolean") {
-        params.set(key, value ? "true" : "false");
+        // Only add slider params if they differ from defaults
+        const defaults = sliderDefaults[key];
+        const isDefault = defaults && value[0] === defaults[0] && value[1] === defaults[1];
+        console.log(`CPU buildQueryParams slider ${key}: isDefault=${isDefault}, defaults=`, defaults);
+        
+        if (!isDefault) {
+          // Map frontend slider names to backend parameter names
+          if (key === 'price') {
+            params.set('minPrice', value[0]);
+            params.set('maxPrice', value[1]);
+            console.log("CPU buildQueryParams: Added price params");
+          } else if (key === 'tdp') {
+            params.set('tdpMin', value[0]);
+            params.set('tdpMax', value[1]);
+            console.log("CPU buildQueryParams: Added tdp params");
+          } else if (key === 'cores') {
+            params.set('coresMin', value[0]);
+            params.set('coresMax', value[1]);
+            console.log("CPU buildQueryParams: Added cores params");
+          } else if (key === 'threads') {
+            params.set('threadsMin', value[0]);
+            params.set('threadsMax', value[1]);
+            console.log("CPU buildQueryParams: Added threads params");
+          } else if (key === 'baseClock') {
+            params.set('baseClockMin', value[0]);
+            params.set('baseClockMax', value[1]);
+            console.log("CPU buildQueryParams: Added baseClock params");
+          } else if (key === 'boostClock') {
+            params.set('boostClockMin', value[0]);
+            params.set('boostClockMax', value[1]);
+            console.log("CPU buildQueryParams: Added boostClock params");
+          }
+        }
+      } else if (Array.isArray(value) && value.length > 0) {
+        // Map frontend array names to backend parameter names
+        if (key === 'brands' && value.length > 0) {
+          // Backend expects single brandName parameter
+          params.set('brandName', value[0]);
+          console.log("CPU buildQueryParams: Added brandName param");
+        } else if (key === 'socket' && value.length > 0) {
+          // Backend expects single socket parameter
+          params.set('socket', value[0]);
+          console.log("CPU buildQueryParams: Added socket param");
+        }
+      } else if (typeof value === "boolean" && value === true) {
+        // Only add boolean params if they're true (not default false)
+        params.set(key, "true");
+        console.log(`CPU buildQueryParams: Added boolean param ${key}=true`);
       }
     }
 
-    return params.toString();
+    const result = params.toString();
+    console.log("CPU buildQueryParams final result:", result);
+    return result;
   };
 
   const handleLogout = () => {
@@ -49,15 +105,19 @@ export default function CPU() {
   useEffect(() => {
     const fetchCPUs = async () => {
       try {
+        console.log("CPU Page: Current filters state:", filters);
         const query = buildQueryParams(filters);
+        console.log("CPU Page: Built query string:", query);
         const url = Object.keys(filters).length
           ? `/api/components/cpus/filtered?${query}`
           : `/api/components/cpus`;
 
-        console.log("New API call:", url);
+        console.log("CPU Page: Final API call URL:", url);
+        console.log("CPU Page: Filters object keys:", Object.keys(filters));
+        console.log("CPU Page: Should use filtered?", Object.keys(filters).length > 0);
         const res = await fetch(url);
         const data = await res.json();
-        console.log("Data received from new query:", data);
+        console.log("CPU Page: Data received:", data.length, "items");
         setCPUs(data);
       } catch (error) {
         console.error("Error fetching CPUs:", error);

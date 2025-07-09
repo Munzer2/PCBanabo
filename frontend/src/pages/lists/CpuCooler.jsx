@@ -17,17 +17,74 @@ export default function CpuCooler() {
   const componentType = location.state?.componentType;
 
   // Fetch CPU Coolers
+  const buildQueryParams = (filters) => {
+    const params = new URLSearchParams();
+
+    // Define default values to skip when they haven't been changed
+    const sliderDefaults = {
+      price: [0, 500],
+      coolingCapacity: [50, 400],
+      towerHeight: [30, 200],
+      radiatorSize: [120, 420],
+      ramClearance: [20, 80],
+    };
+
+    for (const key in filters) {
+      const value = filters[key];
+      if (Array.isArray(value) && value.length === 2) {
+        // Only add slider params if they differ from defaults
+        const defaults = sliderDefaults[key];
+        const isDefault = defaults && value[0] === defaults[0] && value[1] === defaults[1];
+        
+        if (!isDefault) {
+          // Map frontend slider names to backend parameter names
+          if (key === 'price') {
+            params.set('minPrice', value[0]);
+            params.set('maxPrice', value[1]);
+          } else if (key === 'coolingCapacity') {
+            params.set('coolingCapacity', value[0]);
+          } else if (key === 'towerHeight') {
+            params.set('towerHeight', value[0]);
+          } else if (key === 'radiatorSize') {
+            params.set('radiatorSize', value[0]);
+          }
+        }
+      } else if (Array.isArray(value) && value.length > 0) {
+        // Map frontend array names to backend parameter names
+        if (key === 'brands' && value.length > 0) {
+          // Backend expects single brandName parameter
+          params.set('brandName', value[0]);
+        } else if (key === 'coolerTypes' && value.length > 0) {
+          // Backend expects single coolerType parameter
+          params.set('coolerType', value[0]);
+        }
+      } else if (typeof value === "boolean" && value === true) {
+        // Only add boolean params if they're true (not default false)
+        params.set(key, "true");
+      }
+    }
+
+    return params.toString();
+  };
+
   useEffect(() => {
     const fetchCpuCoolers = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/components/cpu-coolers");
+        const query = buildQueryParams(filters);
+        const url = Object.keys(filters).length
+          ? `/api/components/cpu-coolers/filtered?${query}`
+          : `/api/components/cpu-coolers`;
+
+        console.log("Making API call to:", url);
+        const res = await fetch(url);
         
         if (!res.ok) {
           throw new Error("Failed to fetch CPU coolers");
         }
         
         const data = await res.json();
+        console.log("Received data:", data.length, "items");
         setCpuCoolers(data);
         setLoading(false);
       } catch (error) {
@@ -38,7 +95,7 @@ export default function CpuCooler() {
     };
 
     fetchCpuCoolers();
-  }, []);
+  }, [filters]);
 
   // Apply filters from the sidebar
   const handleApplyFilters = (newFilters) => {

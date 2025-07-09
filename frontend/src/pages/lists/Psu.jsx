@@ -4,6 +4,12 @@ import { ArrowLeft, User, LogOut } from "lucide-react";
 import PsuItem from "../../components/lists/items/PsuItem";
 import PsuSidebar from "../../components/lists/sidebars/PsuSidebar";
 
+const sliders = [
+  "price",
+  "wattage",
+  "psuLength",
+];
+
 export default function Psu() {
   const [psus, setPsus] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,18 +22,82 @@ export default function Psu() {
   const fromConfigurator = location.state?.fromConfigurator;
   const componentType = location.state?.componentType;
 
+  const buildQueryParams = (filters) => {
+    const params = new URLSearchParams();
+
+    // Define default values to skip when they haven't been changed
+    const sliderDefaults = {
+      price: [0, 500],
+      wattage: [300, 1600],
+      psuLength: [100, 200],
+    };
+
+    for (const key in filters) {
+      const value = filters[key];
+      if (sliders.includes(key)) {
+        // Only add slider params if they differ from defaults
+        const defaults = sliderDefaults[key];
+        const isDefault = defaults && value[0] === defaults[0] && value[1] === defaults[1];
+        
+        if (!isDefault) {
+          // Map frontend slider names to backend parameter names
+          if (key === 'price') {
+            params.set('minPrice', value[0]);
+            params.set('maxPrice', value[1]);
+          } else if (key === 'wattage') {
+            params.set('wattageMin', value[0]);
+          } else if (key === 'psuLength') {
+            params.set('psuLengthMax', value[1]);
+          }
+        }
+      } else if (Array.isArray(value) && value.length > 0) {
+        // Map frontend array names to backend parameter names
+        if (key === 'brands' && value.length > 0) {
+          // Backend expects single brandName parameter
+          params.set('brandName', value[0]);
+        } else if (key === 'formFactors' && value.length > 0) {
+          // Backend expects single formFactor parameter
+          params.set('formFactor', value[0]);
+        } else if (key === 'certifications' && value.length > 0) {
+          // Backend expects single certification parameter
+          params.set('certification', value[0]);
+        }
+      } else if (typeof value === "boolean" && value === true) {
+        // Only add boolean params if they're true (not default false)
+        params.set(key, "true");
+      }
+    }
+
+    return params.toString();
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login", { replace: true });
+  };
+
   // Fetch PSUs
   useEffect(() => {
     const fetchPsus = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/components/psus");
+        console.log("PSU Page: useEffect triggered with filters:", filters);
+        const query = buildQueryParams(filters);
+        console.log("PSU Page: Built query params:", query);
+        const url = Object.keys(filters).length
+          ? `/api/components/psus/filtered?${query}`
+          : `/api/components/psus`;
+
+        console.log("PSU Page: Making API call to:", url);
+        console.log("PSU Page: Filters has keys?", Object.keys(filters).length > 0);
+        const res = await fetch(url);
         
         if (!res.ok) {
           throw new Error("Failed to fetch PSUs");
         }
         
         const data = await res.json();
+        console.log("PSU Page: Received data:", data.length, "items");
         setPsus(data);
         setLoading(false);
       } catch (error) {
@@ -38,13 +108,14 @@ export default function Psu() {
     };
 
     fetchPsus();
-  }, []);
+  }, [filters]);
 
   // Apply filters from the sidebar
   const handleApplyFilters = (newFilters) => {
-    console.log("Applying filters:", newFilters);
+    console.log("PSU Page: Received filters from sidebar:", newFilters);
+    console.log("PSU Page: Current filters state:", filters);
     setFilters(newFilters);
-    // You would typically filter the PSUs here or make an API call with filters
+    console.log("PSU Page: setFilters called with:", newFilters);
   };
 
   const handleSelectPsu = (psu) => {
@@ -56,11 +127,6 @@ export default function Psu() {
         }
       });
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login", { replace: true });
   };
 
   return (

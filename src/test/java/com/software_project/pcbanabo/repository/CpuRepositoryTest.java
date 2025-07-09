@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,66 +53,88 @@ class CpuRepositoryTest {
         entityManager.persistAndFlush(budgetCpu);
     }
 
-    // @Test
-    // void findByBrandIn_ShouldReturnCpusWithSpecifiedBrands() {
-    //     List<Cpu> result = cpuRepository.findByBrandIn(Arrays.asList("Intel"));
+    @Test
+    void findByModelName_ShouldReturnCpuWithSpecifiedModelName() {
+        Optional<Cpu> result = cpuRepository.findByModelName("Intel Core i7-12700K");
 
-    //     assertThat(result).hasSize(1);
-    //     assertThat(result.get(0).getBrand()).isEqualTo("Intel");
-    //     assertThat(result.get(0).getName()).isEqualTo("Intel Core i7-12700K");
-    // }
+        assertThat(result).isPresent();
+        assertThat(result.get().getBrand_name()).isEqualTo("Intel");
+        assertThat(result.get().getModel_name()).isEqualTo("Intel Core i7-12700K");
+    }
 
-    // @Test
-    // void findByBrandIn_MultipleBrands_ShouldReturnAllMatching() {
-    //     List<Cpu> result = cpuRepository.findByBrandIn(Arrays.asList("Intel", "AMD"));
+    @Test
+    void findByModelName_NonExistentModel_ShouldReturnEmpty() {
+        Optional<Cpu> result = cpuRepository.findByModelName("Non-existent CPU");
 
-    //     assertThat(result).hasSize(3);
-    //     assertThat(result).extracting(Cpu::getBrand).containsOnly("Intel", "AMD");
-    // }
+        assertThat(result).isEmpty();
+    }
 
-    // @Test
-    // void findByPriceBetween_ShouldReturnCpusInPriceRange() {
-    //     List<Cpu> result = cpuRepository.findByPriceBetween(300.0, 400.0);
+    @Test
+    void findAll_ShouldReturnAllCpus() {
+        List<Cpu> result = cpuRepository.findAll();
 
-    //     assertThat(result).hasSize(2);
-    //     assertThat(result).allMatch(cpu -> cpu.getPrice() >= 300.0 && cpu.getPrice() <= 400.0);
-    //     assertThat(result).extracting(Cpu::getName).contains("Intel Core i7-12700K", "AMD Ryzen 7 5800X");
-    // }
+        assertThat(result).hasSize(3);
+        assertThat(result).extracting(Cpu::getModel_name)
+                .contains("Intel Core i7-12700K", "AMD Ryzen 7 5800X", "AMD Ryzen 5 3600");
+    }
 
-    // @Test
-    // void findBySocketIn_ShouldReturnCpusWithSpecifiedSockets() {
-    //     List<Cpu> result = cpuRepository.findBySocketIn(Arrays.asList("AM4"));
+    @Test
+    void findById_ShouldReturnCpuById() {
+        Cpu savedCpu = cpuRepository.findAll().get(0);
+        Optional<Cpu> result = cpuRepository.findById(savedCpu.getId());
 
-    //     assertThat(result).hasSize(2);
-    //     assertThat(result).allMatch(cpu -> cpu.getSocket().equals("AM4"));
-    //     assertThat(result).extracting(Cpu::getName).contains("AMD Ryzen 7 5800X", "AMD Ryzen 5 3600");
-    // }
+        assertThat(result).isPresent();
+        assertThat(result.get().getModel_name()).isEqualTo(savedCpu.getModel_name());
+    }
 
-    // @Test
-    // void findByCoresBetween_ShouldReturnCpusInCoreRange() {
-    //     List<Cpu> result = cpuRepository.findByCoresBetween(6, 10);
+    @Test
+    void save_ShouldPersistNewCpu() {
+        Cpu newCpu = new Cpu();
+        newCpu.setModel_name("Intel Core i9-13900K");
+        newCpu.setBrand_name("Intel");
+        newCpu.setSocket("LGA1700");
+        newCpu.setAverage_price(599.99);
 
-    //     assertThat(result).hasSize(2);
-    //     assertThat(result).allMatch(cpu -> cpu.getCores() >= 6 && cpu.getCores() <= 10);
-    //     assertThat(result).extracting(Cpu::getName).contains("AMD Ryzen 7 5800X", "AMD Ryzen 5 3600");
-    // }
+        Cpu savedCpu = cpuRepository.save(newCpu);
 
-    // @Test
-    // void findByThreadsBetween_ShouldReturnCpusInThreadRange() {
-    //     List<Cpu> result = cpuRepository.findByThreadsBetween(12, 20);
+        assertThat(savedCpu.getId()).isNotNull();
+        assertThat(savedCpu.getModel_name()).isEqualTo("Intel Core i9-13900K");
+        
+        // Verify it was actually saved
+        Optional<Cpu> found = cpuRepository.findByModelName("Intel Core i9-13900K");
+        assertThat(found).isPresent();
+    }
 
-    //     assertThat(result).hasSize(3);
-    //     assertThat(result).allMatch(cpu -> cpu.getThreads() >= 12 && cpu.getThreads() <= 20);
-    // }
+    @Test
+    void deleteById_ShouldRemoveCpu() {
+        Cpu savedCpu = cpuRepository.findAll().get(0);
+        Long cpuId = savedCpu.getId();
 
-    // @Test
-    // void findByBrandAndSocket_ShouldReturnSpecificCombination() {
-    //     List<Cpu> result = cpuRepository.findByBrandIn(Arrays.asList("AMD"));
-    //     result = result.stream()
-    //             .filter(cpu -> Arrays.asList("AM4").contains(cpu.getSocket()))
-    //             .toList();
+        cpuRepository.deleteById(cpuId);
 
-    //     assertThat(result).hasSize(2);
-    //     assertThat(result).allMatch(cpu -> cpu.getBrand().equals("AMD") && cpu.getSocket().equals("AM4"));
-    // }
+        Optional<Cpu> result = cpuRepository.findById(cpuId);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void count_ShouldReturnCorrectCount() {
+        long count = cpuRepository.count();
+        assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    void existsById_ShouldReturnTrueForExistingCpu() {
+        Cpu savedCpu = cpuRepository.findAll().get(0);
+        
+        boolean exists = cpuRepository.existsById(savedCpu.getId());
+        
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    void existsById_ShouldReturnFalseForNonExistentCpu() {
+        boolean exists = cpuRepository.existsById(999L);
+        
+        assertThat(exists).isFalse();
+    }
 }

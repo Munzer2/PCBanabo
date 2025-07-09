@@ -26,15 +26,48 @@ export default function GPU() {
   const buildQueryParams = (filters) => {
     const params = new URLSearchParams();
 
+    // Define default values to skip when they haven't been changed
+    const sliderDefaults = {
+      price: [0, 2500],
+      vram: [2, 24],
+      tdp: [50, 500],
+      cardLength: [100, 400],
+      cardHeight: [20, 200],
+      cardThickness: [20, 100],
+    };
+
     for (const key in filters) {
       const value = filters[key];
       if (sliders.includes(key)) {
-        params.set(`${key}_gte`, value[0]);
-        params.set(`${key}_lte`, value[1]);
-      } else if (Array.isArray(value)) {
-        value.forEach((v) => params.append(key, v));
-      } else if (typeof value === "boolean") {
-        params.set(key, value ? "true" : "false");
+        // Only add slider params if they differ from defaults
+        const defaults = sliderDefaults[key];
+        const isDefault = defaults && value[0] === defaults[0] && value[1] === defaults[1];
+        
+        if (!isDefault) {
+          // Map frontend slider names to backend parameter names
+          if (key === 'price') {
+            params.set('minPrice', value[0]);
+            params.set('maxPrice', value[1]);
+          } else if (key === 'vram') {
+            params.set('vramMin', value[0]);
+          } else if (key === 'tdp') {
+            params.set('tdpMax', value[1]);
+          } else if (key === 'cardLength') {
+            params.set('cardLengthMax', value[1]);
+          }
+        }
+      } else if (Array.isArray(value) && value.length > 0) {
+        // Map frontend array names to backend parameter names
+        if (key === 'brands' && value.length > 0) {
+          // Backend expects single brandName parameter
+          params.set('brandName', value[0]);
+        } else if (key === 'gpuCore' && value.length > 0) {
+          // Backend expects single gpuCore parameter
+          params.set('gpuCore', value[0]);
+        }
+      } else if (typeof value === "boolean" && value === true) {
+        // Only add boolean params if they're true (not default false)
+        params.set(key, "true");
       }
     }
 
