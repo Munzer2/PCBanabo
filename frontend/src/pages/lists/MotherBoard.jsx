@@ -13,8 +13,7 @@ export default function MotherBoard() {
   const location = useLocation();
   
   // Check if we're coming from configurator
-  const fromConfigurator = location.state?.fromConfigurator;
-  const componentType = location.state?.componentType;
+  const { fromConfigurator, selectedComponents, componentType } = location.state || {};
 
   // Fetch motherboards
   const buildQueryParams = (filters) => {
@@ -74,10 +73,28 @@ export default function MotherBoard() {
     const fetchMotherboards = async () => {
       try {
         setLoading(true);
-        const query = buildQueryParams(filters);
-        const url = Object.keys(filters).length
-          ? `/api/components/motherboards/filtered?${query}`
-          : `/api/components/motherboards`;
+        // const query = buildQueryParams(filters);
+        // const url = Object.keys(filters).length
+        //   ? `/api/components/motherboards/filtered?${query}`
+        //   : `/api/components/motherboards`;
+
+        ///1) pull the cpu out
+        const selectedCPU = selectedComponents?.cpu; 
+        const effectiveFilters = {...filters};
+        if(selectedCPU?.socket ) {
+          effectiveFilters.sockets = [ selectedCPU.socket]; 
+        }
+
+        if(selectedComponents?.ram?.memType) {
+          effectiveFilters.memTypes = [ selectedComponents.ram.memType ]; 
+        }
+        console.log(selectedComponents.ram);
+
+
+        const query = buildQueryParams(effectiveFilters); 
+        console.log(query);
+        const url = query.length > 0 ? `/api/components/motherboards/filtered?${query}` : `/api/components/motherboards`;
+        
 
         console.log("Making API call to:", url);
         const res = await fetch(url);
@@ -98,7 +115,7 @@ export default function MotherBoard() {
     };
 
     fetchMotherboards();
-  }, [filters]);
+  }, [filters, selectedComponents]);
 
   // Apply filters from the sidebar
   const handleApplyFilters = (newFilters) => {

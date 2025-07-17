@@ -20,8 +20,7 @@ export default function CPU() {
   const location = useLocation();
   
   // Check if we're coming from configurator
-  const fromConfigurator = location.state?.fromConfigurator;
-  const componentType = location.state?.componentType;
+  const { fromConfigurator, selectedComponents, componentType} = location.state || {}; 
 
   const buildQueryParams = (filters) => {
     console.log("CPU buildQueryParams called with:", filters);
@@ -105,16 +104,22 @@ export default function CPU() {
   useEffect(() => {
     const fetchCPUs = async () => {
       try {
-        console.log("CPU Page: Current filters state:", filters);
-        const query = buildQueryParams(filters);
-        console.log("CPU Page: Built query string:", query);
-        const url = Object.keys(filters).length
-          ? `/api/components/cpus/filtered?${query}`
-          : `/api/components/cpus`;
+        // const query = buildQueryParams(filters);
+        // const url = Object.keys(filters).length
+        //   ? `/api/components/cpus/filtered?${query}`
+        //   : `/api/components/cpus`;
+
+        const effectiveFilters = {...filters};
+        if(selectedComponents?.motherboard?.socket) {
+          effectiveFilters.socket =[ selectedComponents.motherboard.socket ] ;
+        }
+        
+        const query = buildQueryParams(effectiveFilters); 
+
+        const url = query.length > 0 
+          ? `/api/components/cpus/filtered?${query}` : `/api/components/cpus`; 
 
         console.log("CPU Page: Final API call URL:", url);
-        console.log("CPU Page: Filters object keys:", Object.keys(filters));
-        console.log("CPU Page: Should use filtered?", Object.keys(filters).length > 0);
         const res = await fetch(url);
         const data = await res.json();
         console.log("CPU Page: Data received:", data.length, "items");
@@ -125,7 +130,7 @@ export default function CPU() {
     };
 
     fetchCPUs();
-  }, [filters]);
+  }, [filters, selectedComponents]);
 
   const handleApplyFilters = (newFilters) => {
     console.log("Received some new filters:", newFilters);

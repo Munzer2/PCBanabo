@@ -190,7 +190,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers("Noctua", null, null, 
-                                                                          null, null, null, null);
+                                                                          null, null, null, null, null);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getBrand_name()).isEqualTo("Noctua");
@@ -203,7 +203,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler, budgetCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, "Air", null, 
-                                                                          null, null, null, null);
+                                                                          null, null, null, null, null);
 
             assertThat(result).hasSize(2);
             assertThat(result.get(0).getCooler_type()).isEqualTo("Air");
@@ -216,7 +216,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, null, 165, 
-                                                                          null, null, null, null);
+                                                                          null, null, null, null, null);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getTowerHeight()).isEqualTo(165);
@@ -229,7 +229,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(corsairCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, null, null, 
-                                                                          360, null, null, null);
+                                                                          360, null, null, null, null);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getRadiator_size()).isEqualTo(360);
@@ -242,7 +242,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler, corsairCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, null, null, 
-                                                                          null, 200, null, null);
+                                                                          null, 200, null, null, null);
 
             assertThat(result).hasSize(2);
             assertThat(result.get(0).getCoolingCapacity()).isGreaterThanOrEqualTo(200);
@@ -255,7 +255,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, null, null, 
-                                                                          null, null, 80.0, 150.0);
+                                                                          null, null, 80.0, 150.0, null);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getAvg_price()).isBetween(80.0, 150.0);
@@ -268,7 +268,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Arrays.asList(noctuaCooler));
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers("Noctua", "Air", 165, 
-                                                                          null, 220, 80.0, 120.0);
+                                                                          null, 220, 80.0, 120.0, null);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getBrand_name()).isEqualTo("Noctua");
@@ -282,7 +282,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(coolerList);
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers(null, null, null, 
-                                                                          null, null, null, null);
+                                                                          null, null, null, null, null);
 
             assertThat(result).hasSize(3);
             verify(cpuCoolerRepository, times(1)).findAll(any(Specification.class));
@@ -294,7 +294,7 @@ class CpuCoolerServiceTest {
             when(cpuCoolerRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
 
             List<CpuCooler> result = cpuCoolerService.getFilteredCpuCoolers("NonExistentBrand", null, null, 
-                                                                          null, null, null, null);
+                                                                          null, null, null, null, null);
 
             assertThat(result).isEmpty();
             verify(cpuCoolerRepository, times(1)).findAll(any(Specification.class));

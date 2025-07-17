@@ -34,7 +34,7 @@ public class CasingController {
     */
 
     @GetMapping("/filtered")
-    public List<Casing> getFilteredCasings(
+    public List<Casing> getFilteredCasings2(
             // Price range
         @RequestParam(required = false) Double price_gte,
         @RequestParam(required = false) Double price_lte,

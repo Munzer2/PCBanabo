@@ -1,13 +1,18 @@
 package com.software_project.pcbanabo.controller;
 
+import java.net.URI;
+
 import com.software_project.pcbanabo.dto.SaveBuildRequestDTO;
 import com.software_project.pcbanabo.model.SavedBuild;
 import com.software_project.pcbanabo.service.SavedBuildService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/shared-builds")
@@ -34,19 +39,20 @@ public class SavedBuildController {
         return ResponseEntity.ok(filtered);
     }
 
-    @PostMapping("/saved-builds")
-    public ResponseEntity<?> saveBuild(
+    @PostMapping("/{userId}")
+    public ResponseEntity<SavedBuild> saveBuild(
+            @PathVariable Integer userId,
             @RequestBody SaveBuildRequestDTO requestDto
-            /* TODO: Extract authenticated userId from JWT here */
     ) {
-        int userId = 1; // Placeholder – extract from JWT in real use
-        SavedBuild savedBuild = savedBuildService.saveBuild(userId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBuild);
+        SavedBuild saved = savedBuildService.saveBuild(userId, requestDto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{buildId}")
+            .buildAndExpand(saved.getId()).toUri(); 
+        return ResponseEntity.created(location).body(saved); 
     }
 
 
 
-    // ✅ User-specific builds – authentication required
     @GetMapping("/{userId}")
     public ResponseEntity<List<SavedBuild>> getUserBuilds(@PathVariable Integer userId) {
         // TODO: Authenticate using JWT and verify userId matches token claims

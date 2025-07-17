@@ -56,7 +56,7 @@ public class CpuCoolerService {
     public List<CpuCooler> getFilteredCpuCoolers(
             String brandName, String coolerType, Integer towerHeight,
             Integer radiatorSize, Integer coolingCapacity,
-            Double minPrice, Double maxPrice) {
+            Double minPrice, Double maxPrice, String socket) {
 
         Specification<CpuCooler> spec = Specification.where(null);
 
@@ -66,6 +66,7 @@ public class CpuCoolerService {
         spec = spec.and(integerEquals("radiator_size", radiatorSize));
         spec = spec.and(integerEquals("coolingCapacity", coolingCapacity));
         spec = spec.and(rangeBetween("avg_price", minPrice, maxPrice));
+        spec = spec.and(socketSupport("socket_support", socket));
 
         return cpuCoolerRepository.findAll(spec);
     }
@@ -99,5 +100,12 @@ public class CpuCoolerService {
                 return builder.greaterThanOrEqualTo(root.get(fieldName), min);
             return builder.between(root.get(fieldName), min, max);
         };
+    }
+
+    public static Specification<CpuCooler> socketSupport(String fieldName, String socket) {
+        return (root,query, builder) -> {
+            if(socket == null || socket.isBlank()) return builder.conjunction(); 
+            return builder.like(root.get(fieldName), "%" + socket + "%"); 
+        }; 
     }
 }
