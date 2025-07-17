@@ -20,8 +20,10 @@ export default function Casing() {
   const location = useLocation();
   
   // Check if we're coming from configurator
-  const fromConfigurator = location.state?.fromConfigurator;
-  const componentType = location.state?.componentType;
+  // const fromConfigurator = location.state?.fromConfigurator;
+  // const componentType = location.state?.componentType;
+
+  const { fromConfigurator, selectedComponents, componentType } = location?.state || {}; 
 
   const buildQueryParams = (filters) => {
     const params = new URLSearchParams();
@@ -46,7 +48,9 @@ export default function Casing() {
           params.set(`${key}_lte`, value[1]);
         }
       } else if (Array.isArray(value) && value.length > 0) {
-        value.forEach((v) => params.append(key, v));
+        if(key == "motherboard_support" && value.length > 0) {
+          value.forEach(v => params.set("motherboard", v));
+        }
       } else if (typeof value === "boolean" && value === true) {
         // Only add boolean params if they're true (not default false)
         params.set(key, "true");
@@ -65,10 +69,20 @@ export default function Casing() {
     const fetchCasings = async () => {
       try {
         setLoading(true); 
-        const query = buildQueryParams(filters);
-        const url = Object.keys(filters).length
+        // const query = buildQueryParams(filters);
+        
+        const effectiveFilters = {...filters}; 
+
+        if(selectedComponents?.motherboard?.formFactor) {
+          effectiveFilters.motherboard_support = [selectedComponents.motherboard.formFactor];
+        }
+
+        const query = buildQueryParams(effectiveFilters);
+        
+        const url = query.length > 0 
           ? `/api/components/casings/filtered?${query}`
           : `/api/components/casings`;
+
 
         console.log("Making API call to:", url);
         const res = await fetch(url);

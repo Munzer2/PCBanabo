@@ -18,6 +18,7 @@ export default defineConfig({
       '/api/users': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
       '/api/components': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
       '/api/chat': isDocker ? 'http://backend:8080' : 'http://localhost:8080',
+      '/api/shared-builds': isDocker ? 'http://backend:8080' : 'http://localhost:8080',      
     }
   },
   build: {

@@ -31,15 +31,11 @@ export default function Configurator() {
   // Save components to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('configurator-components', JSON.stringify(components));
+    console.log(components);
   }, [components]);
 
   // Debug localStorage on component mount
   useEffect(() => {
-    console.log('=== Configurator Debug Info ===');
-    console.log('localStorage userId:', localStorage.getItem('userId'));
-    console.log('localStorage token:', localStorage.getItem('token'));
-    console.log('API base URL:', import.meta.env.VITE_BACKEND_URL);
-    console.log('==============================');
     
     // For development: if no userId exists, create a mock one
     if (!localStorage.getItem('userId')) {
@@ -74,7 +70,6 @@ export default function Configurator() {
         // Try to fetch user data, but don't fail if it doesn't work
         try {
           const res = await api.get(`/users/${userId}`);
-          console.log('User data received:', res.data);
           clearTimeout(timeout);
           setUser(res.data);
           setIsLoading(false);
@@ -163,11 +158,37 @@ export default function Configurator() {
           .reduce((sum, component) => sum + parseFloat(component.price || 0), 0)
       };
       
-      console.log('Saving build:', buildData);
+      // console.log('Saving build:', buildData);
       
       // Make API call to save the build
-      // const response = await api.post('/builds', buildData);
-      // console.log('Build saved successfully:', response.data);
+      const dto = {
+        cpuId:          buildData.components.cpu, 
+        motherboard:    buildData.components.motherboard,
+        ramId:          buildData.components.ram, 
+        ssdId:    buildData.components.ssd, 
+        gpuId:    buildData.components.gpu, 
+        psuId:    buildData.components.psu, 
+        casingId:    buildData.components.casing, 
+        cpucoolerId:    buildData.components.cpuCooler,
+        buildName:      `My build (${new Date().toLocaleDateString()})`,
+        isPublic:       true 
+      };
+
+      console.log(dto);
+
+      const res = await fetch(
+        `/api/shared-builds/${buildData.userId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json' },
+          body:   JSON.stringify(dto)
+        }
+      ); 
+
+      if(!res.ok) throw new Error(`Error saving the build with status: ${res.status}`); 
+
+      const saved = await res.json(); 
+      console.log('Build has been saved on server: ', saved); 
       
       setHasChanges(false);
       alert('Build saved successfully!');

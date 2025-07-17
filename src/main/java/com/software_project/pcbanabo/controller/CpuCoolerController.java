@@ -53,10 +53,11 @@ public class CpuCoolerController {
             @RequestParam(required = false) Integer radiatorSize,
             @RequestParam(required = false) Integer coolingCapacity,
             @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String socket
     ) {
         return cpuCoolerService.getFilteredCpuCoolers(brandName, coolerType, towerHeight, 
                                                      radiatorSize, coolingCapacity, 
-                                                     minPrice, maxPrice);
+                                                     minPrice, maxPrice, socket);
     }
 }

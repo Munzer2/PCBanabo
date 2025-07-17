@@ -14,6 +14,7 @@ import Ram from './pages/lists/Ram';
 import CpuCooler from './pages/lists/CpuCooler';
 import Psu from './pages/lists/Psu';
 import Ssd from './pages/lists/Ssd';
+import Builds from './pages/Builds';
 
 function App() {
   useLocation();                         // this makes App re-render on route changes
@@ -84,6 +85,12 @@ function App() {
         path="/configurator"
         element={token ? <Configurator /> : <Navigate to="/login" replace />}
       />
+
+      <Route
+        path="/builds"
+        element={token ? <Builds /> : <Navigate to="/login" replace />}
+      />
+
       <Route
         path="*"
         element={<Navigate to={token ? "/dashboard" : "/login"} replace />}

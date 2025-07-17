@@ -12,9 +12,8 @@ export default function CpuCooler() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Check if we're coming from configurator
-  const fromConfigurator = location.state?.fromConfigurator;
-  const componentType = location.state?.componentType;
+
+  const {fromConfigurator, selectedComponents , componentType } = location?.state || {};
 
   // Fetch CPU Coolers
   const buildQueryParams = (filters) => {
@@ -58,6 +57,9 @@ export default function CpuCooler() {
           // Backend expects single coolerType parameter
           params.set('coolerType', value[0]);
         }
+        else if(key == "socket_support" && value.length > 0) {
+          params.set('socket',value[0]);
+        }
       } else if (typeof value === "boolean" && value === true) {
         // Only add boolean params if they're true (not default false)
         params.set(key, "true");
@@ -71,11 +73,18 @@ export default function CpuCooler() {
     const fetchCpuCoolers = async () => {
       try {
         setLoading(true);
-        const query = buildQueryParams(filters);
-        const url = Object.keys(filters).length
+        
+        const effectiveFilters = {...filters};
+        if(selectedComponents?.cpu?.socket) {
+          effectiveFilters.socket_support = [ selectedComponents.cpu.socket ]; 
+        }
+        const query = buildQueryParams(effectiveFilters);
+        const url = query.length > 0
           ? `/api/components/cpu-coolers/filtered?${query}`
           : `/api/components/cpu-coolers`;
 
+        console.log(url); 
+        
         console.log("Making API call to:", url);
         const res = await fetch(url);
         

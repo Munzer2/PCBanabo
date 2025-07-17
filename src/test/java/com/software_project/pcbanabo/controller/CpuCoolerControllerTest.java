@@ -178,7 +178,7 @@ class CpuCoolerControllerTest {
         @Test
         void getFilteredCpuCoolers_WithBrandFilter_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(eq("Noctua"), isNull(), isNull(), 
-                                                      isNull(), isNull(), isNull(), isNull()))
+                                                      isNull(), isNull(), isNull(), isNull(), isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -190,13 +190,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].model_name").value("Noctua NH-D15"));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(eq("Noctua"), isNull(), isNull(), 
-                                                                   isNull(), isNull(), isNull(), isNull());
+                                                                   isNull(), isNull(), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithCoolerTypeFilter_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), eq("Air"), isNull(), 
-                                                      isNull(), isNull(), isNull(), isNull()))
+                                                      isNull(), isNull(), isNull(), isNull(),isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler, budgetCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -207,13 +207,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].cooler_type").value("Air"));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), eq("Air"), isNull(), 
-                                                                   isNull(), isNull(), isNull(), isNull());
+                                                                   isNull(), isNull(), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithTowerHeightFilter_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), eq(165), 
-                                                      isNull(), isNull(), isNull(), isNull()))
+                                                      isNull(), isNull(), isNull(), isNull(),isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -224,13 +224,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].towerHeight").value(165));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), eq(165), 
-                                                                   isNull(), isNull(), isNull(), isNull());
+                                                                   isNull(), isNull(), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithRadiatorSizeFilter_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                      eq(360), isNull(), isNull(), isNull()))
+                                                      eq(360), isNull(), isNull(), isNull(),isNull()))
                     .thenReturn(Arrays.asList(corsairCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -241,13 +241,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].radiator_size").value(360));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                                   eq(360), isNull(), isNull(), isNull());
+                                                                   eq(360), isNull(), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithCoolingCapacityFilter_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                      isNull(), eq(200), isNull(), isNull()))
+                                                      isNull(), eq(200), isNull(), isNull(),isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler, corsairCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -258,13 +258,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].coolingCapacity").exists());
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                                   isNull(), eq(200), isNull(), isNull());
+                                                                   isNull(), eq(200), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithPriceRange_ShouldReturnFilteredResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                      isNull(), isNull(), eq(80.0), eq(150.0)))
+                                                      isNull(), isNull(), eq(80.0), eq(150.0),isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -276,13 +276,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].avg_price").value(99.99));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                                   isNull(), isNull(), eq(80.0), eq(150.0));
+                                                                   isNull(), isNull(), eq(80.0), eq(150.0),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithMultipleFilters_ShouldReturnResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(eq("Noctua"), eq("Air"), eq(165), 
-                                                      isNull(), eq(220), eq(80.0), eq(120.0)))
+                                                      isNull(), eq(220), eq(80.0), eq(120.0),isNull()))
                     .thenReturn(Arrays.asList(noctuaCooler));
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -300,13 +300,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$[0].avg_price").value(99.99));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(eq("Noctua"), eq("Air"), eq(165), 
-                                                                   isNull(), eq(220), eq(80.0), eq(120.0));
+                                                                   isNull(), eq(220), eq(80.0), eq(120.0),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithNoFilters_ShouldReturnAllResults() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                      isNull(), isNull(), isNull(), isNull()))
+                                                      isNull(), isNull(), isNull(), isNull(),isNull()))
                     .thenReturn(coolerList);
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -315,13 +315,13 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$.length()").value(3));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                                   isNull(), isNull(), isNull(), isNull());
+                                                                   isNull(), isNull(), isNull(), isNull(),isNull());
         }
 
         @Test
         void getFilteredCpuCoolers_WithPriceRangeEdgeCases_ShouldWork() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                      isNull(), isNull(), eq(0.0), eq(1000.0)))
+                                                      isNull(), isNull(), eq(0.0), eq(1000.0),isNull()))
                     .thenReturn(coolerList);
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -332,7 +332,7 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$.length()").value(3));
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(isNull(), isNull(), isNull(), 
-                                                                   isNull(), isNull(), eq(0.0), eq(1000.0));
+                                                                   isNull(), isNull(), eq(0.0), eq(1000.0),isNull());
         }
 
         @Test
@@ -346,7 +346,7 @@ class CpuCoolerControllerTest {
         @Test
         void getFilteredCpuCoolers_EmptyResults_ShouldReturnEmptyArray() throws Exception {
             when(cpuCoolerService.getFilteredCpuCoolers(eq("NonExistentBrand"), isNull(), isNull(), 
-                                                      isNull(), isNull(), isNull(), isNull()))
+                                                      isNull(), isNull(), isNull(), isNull(),isNull()))
                     .thenReturn(Collections.emptyList());
 
             mockMvc.perform(get("/api/components/cpu-coolers/filtered")
@@ -357,7 +357,7 @@ class CpuCoolerControllerTest {
                     .andExpect(jsonPath("$").isEmpty());
             
             verify(cpuCoolerService, times(1)).getFilteredCpuCoolers(eq("NonExistentBrand"), isNull(), isNull(), 
-                                                                   isNull(), isNull(), isNull(), isNull());
+                                                                   isNull(), isNull(), isNull(), isNull(),isNull());
         }
     }
 

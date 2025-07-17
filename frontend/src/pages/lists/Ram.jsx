@@ -15,8 +15,10 @@ export default function Ram() {
   const location = useLocation();
   
   // Check if we're coming from configurator
-  const fromConfigurator = location.state?.fromConfigurator;
-  const componentType = location.state?.componentType;
+  // const fromConfigurator = location.state?.fromConfigurator;
+  // const componentType = location.state?.componentType;
+
+  const { fromConfigurator, selectedComponents, componentType } = location?.state || {}; 
 
   const buildQueryParams = (filters) => {
     const params = new URLSearchParams();
@@ -72,14 +74,25 @@ export default function Ram() {
   useEffect(() => {
     const fetchRams = async () => {
       try {
-        const query = buildQueryParams(filters);
-        const url = Object.keys(filters).length
+        // const query = buildQueryParams(filters);
+        // const url = Object.keys(filters).length
+        //   ? `/api/components/rams/filtered?${query}`
+        //   : `/api/components/rams`;
+
+        const effectiveFilters = {...filters};
+        console.log(selectedComponents?.motherboard); 
+        if(selectedComponents?.motherboard?.mem_type) {
+          effectiveFilters.memoryTypes = [ selectedComponents.motherboard.mem_type ];
+        }
+        const query = buildQueryParams(effectiveFilters); 
+        const url = query.length > 0 
           ? `/api/components/rams/filtered?${query}`
           : `/api/components/rams`;
 
+        console.log(url);
+
         const res = await fetch(url);
         const data = await res.json();
-        console.log("Data received from new query:", data);
         setRams(data);
       } catch (error) {
         console.error("Error fetching RAM modules:", error);
