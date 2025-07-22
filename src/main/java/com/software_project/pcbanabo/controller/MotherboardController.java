@@ -56,7 +56,7 @@ public class MotherboardController {
     }
 
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Motherboard> getMotherboardById(@PathVariable Long id) {
         Motherboard m = motherboardService.getMotherboardById(id);
         return m != null ? ResponseEntity.ok(m) : ResponseEntity.notFound().build();
