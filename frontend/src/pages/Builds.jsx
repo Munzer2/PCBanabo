@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronDown, LogOut, RefreshCw, X } from "lucide-react"; // Added X
+import { ChevronDown, LogOut, RefreshCw, X, Trash2 } from "lucide-react"; // Added X
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
 
@@ -11,11 +11,16 @@ const Builds = () => {
     const [user, setUser] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [selectedBuild, setSelectedBuild] = useState(null); // Fixed typo
+    const [selectedBuild, setSelectedBuild] = useState(null); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [buildDetails, setBuildDetails] = useState(null);
-    const [isLoadingDetails, setIsLoadingDetails] = useState(false); // Added missing state
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false); 
     const navigate = useNavigate();
+
+
+    const handleDeleteBuild = (buildId) => {
+        setBuilds(prevBuilds => prevBuilds.filter(build => build.id !== buildId));
+    };
 
     useEffect(() => {
         // Set a timeout to prevent infinite loading
@@ -326,45 +331,78 @@ const Builds = () => {
     );
 
     // Fixed BuildCard with working View Details button
-    const BuildCard = ({ build }) => {
+    const BuildCard = ({ build, onDelete }) => {
         const handleViewDetails = async () => {
             setSelectedBuild(build);
             setIsModalOpen(true);
             await fetchBuildDetails(build);
         };
 
+        const handleDelete = async (e) => {
+        e.stopPropagation(); // Prevent triggering other click events
+        
+        if (!window.confirm(`Are you sure you want to delete "${build.buildName}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/shared-builds/${build.id}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                onDelete(build.id);
+                alert('Build deleted successfully!');
+            } else {
+                throw new Error(`Failed to delete build: ${res.status}`);
+            }
+        } catch (error) {
+            console.error('Error deleting build:', error);
+            alert('Failed to delete build. Please try again.');
+        }
+    };
+
         return (
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-gray-100 flex-1">{build.buildName}</h3>
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div className="flex justify-between items-start mb-4">
+                <h3 className="text-lg font-semibold text-gray-100 flex-1">{build.buildName}</h3>
+                <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded">
                         ID: {build.id}
                     </span>
-                </div>
-                
-                <div className="mb-6">
-                    <div className="space-y-1 text-sm text-gray-400">
-                        {build.savedAt && (
-                            <span className="block">
-                                Created: {new Date(build.savedAt).toLocaleDateString()}
-                            </span>
-                        )}
-                    </div>
-                </div>
-                
-                <div className="flex gap-3">
-                    <button 
-                        onClick={handleViewDetails}
-                        className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                    <button
+                        onClick={handleDelete}
+                        className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                        title="Delete build"
                     >
-                        View Details
-                    </button>
-                    <button className="flex-1 px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors font-medium border border-gray-600">
-                        Copy Build
+                        <Trash2 size={16} />
                     </button>
                 </div>
             </div>
-        );
+            
+            <div className="mb-6">
+                <div className="space-y-1 text-sm text-gray-400">
+                    {build.savedAt && (
+                        <span className="block">
+                            Created: {new Date(build.savedAt).toLocaleDateString()}
+                        </span>
+                    )}
+                </div>
+            </div>
+            
+            <div className="flex gap-3">
+                <button 
+                    onClick={handleViewDetails}
+                    className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                >
+                    View Details
+                </button>
+                <button className="flex-1 px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors font-medium border border-gray-600">
+                    Copy Build
+                </button>
+            </div>
+        </div>
+    );
     };
 
     // Close modal function
@@ -594,7 +632,11 @@ const Builds = () => {
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {builds.map(build => (
-                                        <BuildCard key={build.id} build={build} />
+                                        <BuildCard 
+                                            key={build.id} 
+                                            build={build} 
+                                            onDelete={handleDeleteBuild}
+                                        />
                                     ))}
                                 </div>
                             )}

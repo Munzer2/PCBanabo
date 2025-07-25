@@ -1,15 +1,24 @@
 package com.software_project.pcbanabo.service;
 
-import com.software_project.pcbanabo.dto.SaveBuildRequestDTO;
-import com.software_project.pcbanabo.model.SavedBuild;
-import com.software_project.pcbanabo.repository.*;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
-
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
+import com.software_project.pcbanabo.dto.SaveBuildRequestDTO;
+import com.software_project.pcbanabo.model.SavedBuild;
+import com.software_project.pcbanabo.repository.CasingRepository;
+import com.software_project.pcbanabo.repository.CpuCoolerRepository;
+import com.software_project.pcbanabo.repository.CpuRepository;
+import com.software_project.pcbanabo.repository.GpuRepository;
+import com.software_project.pcbanabo.repository.MotherboardRepository;
+import com.software_project.pcbanabo.repository.PsuRepository;
+import com.software_project.pcbanabo.repository.RamRepository;
+import com.software_project.pcbanabo.repository.SavedBuildRepository;
+import com.software_project.pcbanabo.repository.SsdRepository;
 
 @Service
 public class SavedBuildService {
@@ -111,5 +120,18 @@ public class SavedBuildService {
 
     public List<SavedBuild> getUserBuilds(Integer userId) {
         return savedBuildRepository.findByUserId(userId);
+    }
+
+    public boolean deleteBuild(Integer buildId) {
+        try {
+            if (savedBuildRepository.existsById(buildId)) {
+                savedBuildRepository.deleteById(buildId);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            // Log the error
+            return false;
+        }
     }
 }
