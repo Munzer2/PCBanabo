@@ -163,15 +163,15 @@ export default function Configurator() {
       // Make API call to save the build
       const dto = {
         cpuId:          buildData.components.cpu, 
-        motherboard:    buildData.components.motherboard,
+        motherboardId:    buildData.components.motherboard,
         ramId:          buildData.components.ram, 
         ssdId:    buildData.components.ssd, 
         gpuId:    buildData.components.gpu, 
         psuId:    buildData.components.psu, 
         casingId:    buildData.components.casing, 
-        cpucoolerId:    buildData.components.cpuCooler,
+        cpuCoolerId:    buildData.components.cpuCooler,
         buildName:      `My build (${new Date().toLocaleDateString()})`,
-        isPublic:       true 
+        public:       true 
       };
 
       console.log(dto);
