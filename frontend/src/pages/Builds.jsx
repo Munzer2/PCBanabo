@@ -648,9 +648,8 @@ const Builds = () => {
                 {isChatOpen && (
                     <div className="fixed right-0 top-0 bottom-0 z-40 h-full">
                         <ChatSidebar
-                            isOpen={isChatOpen}
                             onClose={() => setIsChatOpen(false)}
-                            userId={user.id}
+                            currentPage="/builds"
                         />
                     </div>
                 )}

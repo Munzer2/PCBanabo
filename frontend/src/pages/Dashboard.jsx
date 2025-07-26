@@ -38,7 +38,7 @@ export default function Dashboard() {
       {/* ======================= */}
       {/*       SIDEBAR         */}
       {/* ======================= */}
-      <aside className="w-64 bg-gray-800 text-gray-200 flex-shrink-0">
+      <aside className="hidden lg:block w-64 bg-gray-800 text-gray-200 flex-shrink-0">
         <div className="px-6 py-8 border-b border-gray-700">
           <h1 className="text-2xl font-extrabold tracking-wide text-white">
             PCBanabo
@@ -211,13 +211,13 @@ export default function Dashboard() {
       {/* ======================= */}
       {/*     RIGHT PANEL       */}
       {/* ======================= */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isChatOpen ? 'lg:mr-80' : 'mr-0'}`}>
         {/* TOP BAR */}
-        <header className="flex justify-between items-center bg-gray-800 border-b border-gray-700 px-8 h-16 shadow-sm">
+        <header className="flex justify-between items-center bg-gray-800 border-b border-gray-700 px-4 sm:px-8 h-16 shadow-sm">
           <div>
-            <h2 className="text-xl font-semibold text-gray-100">Dashboard</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-100">Dashboard</h2>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Chat toggle button */}
             <button
               onClick={() => setIsChatOpen(!isChatOpen)}
@@ -237,7 +237,7 @@ export default function Dashboard() {
               >
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
-              <span className="font-medium">Chat</span>
+              <span className="font-medium hidden sm:inline">Chat</span>
             </button>
 
             {/* Logout button - moved inside the flex container */}
@@ -246,16 +246,16 @@ export default function Dashboard() {
               className="flex items-center space-x-1 text-gray-200 hover:text-red-400 transition-colors duration-200"
             >
               <LogOut className="h-5 w-5" />
-              <span className="font-medium">Logout</span>
+              <span className="font-medium hidden sm:inline">Logout</span>
             </button>
           </div>
         </header>
 
         {/* MAIN CONTENT */}
-        <main className="flex-1 overflow-y-auto p-8 bg-gray-900">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gray-900">
           <div className="max-w-3xl mx-auto">
-            <section className="bg-gray-800 rounded-2xl shadow-md p-8">
-              <h3 className="text-3xl font-bold text-gray-100 mb-6">
+            <section className="bg-gray-800 rounded-2xl shadow-md p-4 sm:p-8">
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-100 mb-4 sm:mb-6">
                 Welcome,&nbsp;
                 <span className="text-purple-400">{user.userName}</span>
               </h3>
@@ -310,15 +310,12 @@ export default function Dashboard() {
           </div>
         </main>
         {/* Chat Sidebar */}
-        {isChatOpen && (
-          <div className="fixed right-0 top-0 bottom-0 z-40 h-full">
-            <ChatSidebar
-              isOpen={isChatOpen}
-              onClose={() => setIsChatOpen(false)}
-              userId={user.id}
-            />
-          </div>
-        )}
+        <ChatSidebar
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          currentPage="/dashboard"
+          userContext={user}
+        />
       </div>
     </div>
   );
