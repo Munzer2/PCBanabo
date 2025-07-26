@@ -59,6 +59,7 @@ public class SavedBuildController {
     @GetMapping("/{userId}")
     public ResponseEntity<List<SavedBuild>> getUserBuilds(@PathVariable Integer userId) {
         // TODO: Authenticate using JWT and verify userId matches token claims
+        List<SavedBuild> userBuilds = savedBuildService.getUserBuilds(userId);
         return ResponseEntity.ok(savedBuildService.getUserBuilds(userId));
     }
 

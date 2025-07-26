@@ -25,6 +25,7 @@ export default function Configurator() {
   const [user, setUser] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [buildName, setBuildName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -145,6 +146,11 @@ export default function Configurator() {
 
   // Handle saving the build
   const handleSaveBuild = async () => {
+    if (!buildName.trim()) {
+      alert('Please enter a build name before saving.');
+      return;
+    }
+
     try {
       const buildData = {
         userId: localStorage.getItem('userId'),
@@ -170,7 +176,7 @@ export default function Configurator() {
         psuId:    buildData.components.psu, 
         casingId:    buildData.components.casing, 
         cpuCoolerId:    buildData.components.cpuCooler,
-        buildName:      `My build (${new Date().toLocaleDateString()})`,
+        buildName:      buildName.trim(),
         public:       true 
       };
 
@@ -280,6 +286,27 @@ export default function Configurator() {
                   onRemove={() => handleRemoveComponent(type)}
                 />
               ))}
+            </div>
+
+            {/* Build Name Input */}
+            <div className="mb-8">
+              <div className="max-w-md mx-auto">
+                <label htmlFor="buildName" className="block text-sm font-medium text-gray-300 mb-2">
+                  Build Name
+                </label>
+                <input
+                  type="text"
+                  id="buildName"
+                  value={buildName}
+                  onChange={(e) => setBuildName(e.target.value)}
+                  placeholder="Enter a name for your build..."
+                  className="w-full px-4 py-2 bg-slate-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  maxLength={100}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {buildName.length}/100 characters
+                </p>
+              </div>
             </div>
 
             {/* Build Actions */}
