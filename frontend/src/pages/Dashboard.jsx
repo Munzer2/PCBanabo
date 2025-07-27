@@ -19,66 +19,175 @@ export default function Dashboard() {
   const [userActivity, setUserActivity] = useState([]);
   const navigate = useNavigate();
 
-  // Helper functions
-  const calculateDaysActive = (createdAt) => {
-    const created = new Date(createdAt);
-    const now = new Date();
-    const diffTime = Math.abs(now - created);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
   const fetchUserStats = async (userId) => {
     try {
-      const [buildsRes, trendsRes] = await Promise.all([
-        fetch(`/api/shared-builds/user/${userId}`),
-        fetch(`/api/shared-builds`)
-      ]);
+      
+      // Get the token for authentication
+      const token = localStorage.getItem('token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      
+      // Use the correct API endpoint from the backend
+      const buildsRes = await fetch(`/api/shared-builds/${userId}`, { headers });
+      const trendsRes = await fetch(`/api/shared-builds`, { headers });
+      
       
       if (buildsRes.ok) {
         const builds = await buildsRes.json();
-        setRecentBuilds(builds);
         
-        const totalValue = builds.reduce((sum, build) => {
-          return sum + (build.totalPrice || 0);
-        }, 0);
+        // Ensure builds is an array
+        const buildsArray = Array.isArray(builds) ? builds : [];
+        setRecentBuilds(buildsArray);
+        
+        // Calculate total value by fetching component prices
+        let totalValue = 0;
+        
+        for (const build of buildsArray) {
+          let buildPrice = 0;
+          
+          // Fetch prices for each component type
+          const componentTypes = [
+            { type: 'cpu', id: build.cpuId },
+            { type: 'gpu', id: build.gpuId },
+            { type: 'motherboard', id: build.motherboardId },
+            { type: 'ram', id: build.ramId },
+            { type: 'ssd', id: build.ssdId },
+            { type: 'psu', id: build.psuId },
+            { type: 'casing', id: build.casingId },
+            { type: 'cpu-cooler', id: build.cpuCoolerId }
+          ];
+          
+          for (const component of componentTypes) {
+            if (component.id) {
+              try {
+                const componentRes = await fetch(`/api/components/${component.type}s/${component.id}`, { headers });
+                if (componentRes.ok) {
+                  const componentData = await componentRes.json();
+                  // Different components use different field names:
+                  // CPU uses "average_price", others use "avg_price"
+                  const price = componentData.average_price || componentData.avg_price || componentData.avgPrice || componentData.price || 0;
+                  buildPrice += parseFloat(price);
+                }
+              } catch (error) {
+                console.error(`Error fetching ${component.type} price:`, error);
+              }
+            }
+          }
+          
+          totalValue += buildPrice;
+        }
+        
         
         setUserStats({
-          totalBuilds: builds.length,
-          totalValue: totalValue,
-          publicBuilds: builds.filter(b => b.public).length
+          totalBuilds: buildsArray.length,
+          totalValue: Math.round(totalValue),
+          publicBuilds: buildsArray.filter(b => b.public === true || b.isPublic === true).length
         });
         
-        // Mock activity data
-        setUserActivity([
-          { action: "Created new build 'Gaming Rig 2024'", timestamp: "2 hours ago", type: "build" },
-          { action: "Updated CPU selection", timestamp: "1 day ago", type: "edit" },
-          { action: "Shared build publicly", timestamp: "3 days ago", type: "share" }
-        ]);
+        // Generate realistic activity data based on actual builds
+        const activityData = [];
+        if (buildsArray.length > 0) {
+          const latestBuild = buildsArray[0];
+          activityData.push({ 
+            action: `Created build '${latestBuild.buildName || 'Unnamed Build'}'`, 
+            timestamp: new Date(latestBuild.savedAt || Date.now()).toLocaleDateString(), 
+            type: "build" 
+          });
+          
+          if (buildsArray.length > 1) {
+            activityData.push({ 
+              action: `You have ${buildsArray.length} total builds`, 
+              timestamp: "Recent", 
+              type: "info" 
+            });
+          }
+          
+          const publicBuilds = buildsArray.filter(b => b.public === true || b.isPublic === true);
+          if (publicBuilds.length > 0) {
+            activityData.push({ 
+              action: `${publicBuilds.length} builds shared publicly`, 
+              timestamp: "Recent", 
+              type: "share" 
+            });
+          }
+        } else {
+          activityData.push({ 
+            action: "Ready to build your first PC!", 
+            timestamp: "Today", 
+            type: "welcome" 
+          });
+        }
+        
+        setUserActivity(activityData);
+      } else {
+        console.error('Failed to fetch user builds:', buildsRes.status, buildsRes.statusText);
+        const errorText = await buildsRes.text();
+        console.error('Error details:', errorText);
+        
+        // Set empty data if API fails
+        setUserStats({
+          totalBuilds: 0,
+          totalValue: 0,
+          publicBuilds: 0
+        });
+        setRecentBuilds([]);
+        setUserActivity([{ 
+          action: "Unable to load builds - check connection", 
+          timestamp: "Now", 
+          type: "error" 
+        }]);
       }
       
       if (trendsRes.ok) {
         const allBuilds = await trendsRes.json();
-        setTrendingBuilds(allBuilds.slice(0, 5));
+        const buildsArray = Array.isArray(allBuilds) ? allBuilds : [];
+        setTrendingBuilds(buildsArray.slice(0, 5));
+      } else {
+        console.error('Failed to fetch trending builds');
+        setTrendingBuilds([]);
       }
     } catch (error) {
       console.error('Error fetching user stats:', error);
+      // Set fallback data
+      setUserStats({
+        totalBuilds: 0,
+        totalValue: 0,
+        publicBuilds: 0
+      });
+      setRecentBuilds([]);
+      setUserActivity([{ 
+        action: "Error loading data - please refresh", 
+        timestamp: "Now", 
+        type: "error" 
+      }]);
     }
   };
 
   useEffect(() => {
     (async () => {
       const userId = localStorage.getItem("userId");
+      
       if (!userId) return navigate("/login", { replace: true });
       
       try {
         const res = await api.get(`/api/users/${userId}`);
+        console.log('User data loaded:', res.data);
+        console.log('User createdAt field:', res.data.createdAt);
         setUser(res.data);
         
         // Fetch additional dashboard data
         await fetchUserStats(userId);
       } catch (error) {
         console.error('Error loading dashboard:', error);
+        // Try to continue with basic user info even if API fails
+        const fallbackUser = { 
+          userName: 'User', 
+          email: 'user@example.com', 
+          createdAt: new Date().toISOString() 
+        };
+        console.log('Using fallback user:', fallbackUser);
+        setUser(fallbackUser);
+        await fetchUserStats(userId);
       }
     })();
   }, [navigate]);
@@ -338,7 +447,7 @@ export default function Dashboard() {
               </div>
             </section>
 
-            <section className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <section className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -400,30 +509,6 @@ export default function Dashboard() {
                       strokeLinejoin="round"
                       strokeWidth={2}
                       d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-6 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-orange-100 text-sm">Days Active</p>
-                    <p className="text-2xl font-bold">
-                      {calculateDaysActive(user.createdAt)}
-                    </p>
-                  </div>
-                  <svg
-                    className="h-8 w-8 text-orange-200"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
                 </div>

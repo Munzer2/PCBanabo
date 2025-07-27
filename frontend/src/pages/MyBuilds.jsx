@@ -489,6 +489,14 @@ const MyBuilds = () => {
                     <ul>
                         <li className="mb-1">
                             <Link
+                                to="/dashboard"
+                                className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
+                            >
+                                Dashboard
+                            </Link>
+                        </li>
+                        <li className="mb-1">
+                            <Link
                                 to="/builds/my"
                                 className="flex items-center px-6 py-3 text-white bg-gray-700 transition-colors duration-200 rounded-r-full"
                             >
