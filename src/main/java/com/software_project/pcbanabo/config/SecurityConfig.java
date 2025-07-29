@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/api/users/**",
                                 "/auth/register",
-                                "/api/chat")
+                                "/api/chat",
+                                "/api/chat/suggest-build")
                         .permitAll() // Allow public access to /api endpoints
                         .anyRequest().authenticated() // Everything else requires login
                 )
