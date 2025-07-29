@@ -88,7 +88,7 @@ export default function MotherBoard() {
         if(selectedComponents?.ram?.memType) {
           effectiveFilters.memTypes = [ selectedComponents.ram.memType ]; 
         }
-        console.log(selectedComponents.ram);
+        console.log(selectedComponents?.ram);
 
 
         const query = buildQueryParams(effectiveFilters); 
