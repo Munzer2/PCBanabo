@@ -185,9 +185,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.cpu.model_name || 'N/A'}
                                         </p>
-                                        {build.cpu.price && (
+                                        {(build.cpu.average_price || build.cpu.avg_price || build.cpu.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.cpu.price}
+                                                <span className="font-medium">Price:</span> ৳{build.cpu.average_price || build.cpu.avg_price || build.cpu.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -203,9 +203,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.gpu.model_name || 'N/A'}
                                         </p>
-                                        {build.gpu.price && (
+                                        {(build.gpu.avg_price || build.gpu.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.gpu.price}
+                                                <span className="font-medium">Price:</span> ৳{build.gpu.avg_price || build.gpu.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -221,9 +221,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.motherboard.model_name || 'N/A'}
                                         </p>
-                                        {build.motherboard.price && (
+                                        {(build.motherboard.avg_price || build.motherboard.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.motherboard.price}
+                                                <span className="font-medium">Price:</span> ৳{build.motherboard.avg_price || build.motherboard.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -239,9 +239,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.ram.model_name || 'N/A'}
                                         </p>
-                                        {build.ram.price && (
+                                        {(build.ram.avg_price || build.ram.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.ram.price}
+                                                <span className="font-medium">Price:</span> ৳{build.ram.avg_price || build.ram.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -257,9 +257,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.ssd.model_name || 'N/A'}
                                         </p>
-                                        {build.ssd.price && (
+                                        {(build.ssd.avg_price || build.ssd.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.ssd.price}
+                                                <span className="font-medium">Price:</span> ৳{build.ssd.avg_price || build.ssd.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -275,9 +275,9 @@ const MyBuilds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.psu.model_name || 'N/A'}
                                         </p>
-                                        {build.psu.price && (
+                                        {(build.psu.avg_price || build.psu.price) && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.psu.price}
+                                                <span className="font-medium">Price:</span> ৳{build.psu.avg_price || build.psu.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -295,7 +295,7 @@ const MyBuilds = () => {
                                         </p>
                                         {build.cpuCooler.price && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.cpuCooler.price}
+                                                <span className="font-medium">Price:</span> ৳{build.cpuCooler.avg_price || build.cpuCooler.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -313,7 +313,7 @@ const MyBuilds = () => {
                                         </p>
                                         {build.casing.price && (
                                             <p className="text-gray-200">
-                                                <span className="font-medium">Price:</span> ৳{build.casing.price}
+                                                <span className="font-medium">Price:</span> ৳{build.casing.avg_price || build.casing.price || 0}
                                             </p>
                                         )}
                                     </div>
@@ -332,13 +332,18 @@ const MyBuilds = () => {
                                         <span className="font-medium">Visibility:</span> {build.public ? 'Public' : 'Private'}
                                     </p>
                                     {/* Total Price */}
-                                    <p className="text-gray-200">
+                                    <p className="text-green-400 font-semibold text-lg">
                                         <span className="font-medium">Total Price:</span> ৳{
                                             ['cpu', 'gpu', 'motherboard', 'ram', 'ssd', 'psu', 'cpuCooler', 'casing']
                                                 .reduce((total, component) => {
-                                                    const price = build[component]?.price || 0;
-                                                    return total + price;
-                                                }, 0)
+                                                    const comp = build[component];
+                                                    if (!comp) return total;
+                                                    // CPU uses "average_price", others use "avg_price"
+                                                    const price = component === 'cpu' 
+                                                        ? (comp.average_price || comp.avg_price || comp.price || 0)
+                                                        : (comp.avg_price || comp.price || 0);
+                                                    return total + parseFloat(price);
+                                                }, 0).toFixed(0)
                                         }
                                     </p>
                                 </div>
@@ -509,6 +514,14 @@ const MyBuilds = () => {
                                 className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
                                 All Builds
+                            </Link>
+                        </li>
+                        <li className="mb-1">
+                            <Link
+                                to="/users"
+                                className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
+                            >
+                                Users
                             </Link>
                         </li>
 

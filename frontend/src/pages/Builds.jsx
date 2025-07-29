@@ -188,6 +188,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.cpu.model_name || 'N/A'}
                                         </p>
+                                        {(build.cpu.average_price || build.cpu.avg_price || build.cpu.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.cpu.average_price || build.cpu.avg_price || build.cpu.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -201,6 +206,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.gpu.model_name || 'N/A'}
                                         </p>
+                                        {(build.gpu.avg_price || build.gpu.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.gpu.avg_price || build.gpu.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -214,6 +224,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.motherboard.model_name || 'N/A'}
                                         </p>
+                                        {(build.motherboard.avg_price || build.motherboard.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.motherboard.avg_price || build.motherboard.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -227,6 +242,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.ram.model_name || 'N/A'}
                                         </p>
+                                        {(build.ram.avg_price || build.ram.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.ram.avg_price || build.ram.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -240,6 +260,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.ssd.model_name || 'N/A'}
                                         </p>
+                                        {(build.ssd.avg_price || build.ssd.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.ssd.avg_price || build.ssd.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -253,6 +278,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.psu.model_name || 'N/A'}
                                         </p>
+                                        {(build.psu.avg_price || build.psu.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.psu.avg_price || build.psu.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -266,6 +296,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.cpuCooler.model_name || 'N/A'}
                                         </p>
+                                        {(build.cpuCooler.avg_price || build.cpuCooler.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.cpuCooler.avg_price || build.cpuCooler.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -279,6 +314,11 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.casing.model_name || 'N/A'}
                                         </p>
+                                        {(build.casing.avg_price || build.casing.price) && (
+                                            <p className="text-gray-200">
+                                                <span className="font-medium">Price:</span> ৳{build.casing.avg_price || build.casing.price || 0}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -291,6 +331,23 @@ const Builds = () => {
                                     <p className="text-gray-200">
                                         <span className="font-medium">Build ID:</span> {build.id}
                                     </p>
+                                    {(() => {
+                                        const totalPrice = 
+                                            (build.cpu ? (build.cpu.average_price || build.cpu.avg_price || build.cpu.price || 0) : 0) +
+                                            (build.gpu ? (build.gpu.avg_price || build.gpu.price || 0) : 0) +
+                                            (build.motherboard ? (build.motherboard.avg_price || build.motherboard.price || 0) : 0) +
+                                            (build.ram ? (build.ram.avg_price || build.ram.price || 0) : 0) +
+                                            (build.ssd ? (build.ssd.avg_price || build.ssd.price || 0) : 0) +
+                                            (build.psu ? (build.psu.avg_price || build.psu.price || 0) : 0) +
+                                            (build.cpuCooler ? (build.cpuCooler.avg_price || build.cpuCooler.price || 0) : 0) +
+                                            (build.casing ? (build.casing.avg_price || build.casing.price || 0) : 0);
+                                        
+                                        return totalPrice > 0 ? (
+                                            <p className="text-green-400 text-lg font-semibold mt-2">
+                                                <span className="font-medium">Total Price:</span> ৳{totalPrice.toLocaleString()}
+                                            </p>
+                                        ) : null;
+                                    })()}
                                 </div>
                             </div>
                         )}
@@ -453,6 +510,14 @@ const Builds = () => {
                                 className="flex items-center px-6 py-3 text-white bg-gray-700 transition-colors duration-200 rounded-r-full"
                             >
                                 All Builds
+                            </Link>
+                        </li>
+                        <li className="mb-1">
+                            <Link
+                                to="/users"
+                                className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
+                            >
+                                Users
                             </Link>
                         </li>
 

@@ -242,6 +242,18 @@ export default function Dashboard() {
                 All Builds
               </Link>
             </li>
+            <li className="mb-1">
+              <Link
+                to="/users"
+                className="
+                  flex items-center px-6 py-3 
+                  text-gray-200 hover:bg-gray-700 hover:text-white
+                  transition-colors duration-200 rounded-r-full
+                "
+              >
+                Users
+              </Link>
+            </li>
 
             {/* Dropdown: All Components */}
             <li className="mb-1">
