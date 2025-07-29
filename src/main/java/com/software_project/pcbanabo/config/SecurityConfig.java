@@ -32,6 +32,7 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userService);
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
+                .cors(cors -> cors.configure(http)) // Enable CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/components/**",
                                 "/api/benchmarks",
