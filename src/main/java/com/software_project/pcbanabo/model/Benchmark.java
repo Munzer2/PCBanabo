@@ -2,11 +2,13 @@ package com.software_project.pcbanabo.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "benchmark")
 public class Benchmark {
+    @Id
     @Column(name = "cpu_id")
     private Long cpuId;
     @Column(name = "gpu_id")
