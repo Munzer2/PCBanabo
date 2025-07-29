@@ -5,6 +5,7 @@ import RamSidebar from "../../components/lists/sidebars/RamSidebar";
 import RamItem from "../../components/lists/items/RamItem";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = ["price", "speed"];
 
@@ -93,10 +94,10 @@ export default function Ram() {
           ? `/api/components/rams/filtered?${query}`
           : `/api/components/rams`;
 
-        console.log(url);
-
-        const res = await fetch(url);
-        const data = await res.json();
+        console.log("New API call:", url);
+        const res = await api.get(url);
+        const data = res.data;
+        console.log("Data received from new query:", data);
         setRams(data);
       } catch (error) {
         console.error("Error fetching RAM modules:", error);

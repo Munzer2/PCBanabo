@@ -5,6 +5,7 @@ import SsdItem from "../../components/lists/items/SsdItem";
 import SsdSidebar from "../../components/lists/sidebars/SsdSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = [
   "price",
@@ -98,13 +99,8 @@ export default function Ssd() {
           : `/api/components/ssds`;
 
         console.log("Making API call to:", url);
-        const res = await fetch(url);
-        
-        if (!res.ok) {
-          throw new Error("Failed to fetch storage devices");
-        }
-        
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("Received data:", data.length, "items");
         setSsds(data);
         setLoading(false);

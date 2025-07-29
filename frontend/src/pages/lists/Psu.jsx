@@ -5,6 +5,7 @@ import PsuItem from "../../components/lists/items/PsuItem";
 import PsuSidebar from "../../components/lists/sidebars/PsuSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = [
   "price",
@@ -94,13 +95,8 @@ export default function Psu() {
 
         console.log("PSU Page: Making API call to:", url);
         console.log("PSU Page: Filters has keys?", Object.keys(filters).length > 0);
-        const res = await fetch(url);
-        
-        if (!res.ok) {
-          throw new Error("Failed to fetch PSUs");
-        }
-        
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("PSU Page: Received data:", data.length, "items");
         setPsus(data);
         setLoading(false);

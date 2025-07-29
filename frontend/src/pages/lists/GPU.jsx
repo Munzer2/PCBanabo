@@ -5,6 +5,7 @@ import GpuItem from "../../components/lists/items/GpuItem";
 import GpuSidebar from "../../components/lists/sidebars/GpuSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = [
   "price",
@@ -94,8 +95,8 @@ export default function GPU() {
           : `/api/components/gpus`;
 
         console.log("New API call:", url);
-        const res = await fetch(url);
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("Data received from new query:", data);
         setGpus(data);
         setLoading(false);
