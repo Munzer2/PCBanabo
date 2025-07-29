@@ -59,6 +59,10 @@ public class SavedBuildService {
         return savedBuildRepository.findByIsPublicTrue();
     }
 
+    public SavedBuild getBuildById(Integer id) {
+        return savedBuildRepository.findById(id).orElse(null);
+    }
+
     public List<SavedBuild> getPublicBuildsFilteredByPrice(Integer minPrice, Integer maxPrice) {
         List<SavedBuild> allPublicBuilds = savedBuildRepository.findByIsPublicTrue();
 

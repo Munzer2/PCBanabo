@@ -23,7 +23,7 @@ public class BenchmarkController {
     }
 
     @GetMapping("/{id")
-    public Benchmark getBenchmarkByBuildId (@PathVariable Long id) {
+    public Benchmark getBenchmarkByBuildId (@PathVariable Integer id) {
         SavedBuild savedBuild = savedBuildService.getBuildById(id);
         Long cpu = (long) savedBuild.getCpuId();
         Long gpu = (long) savedBuild.getGpuId();
