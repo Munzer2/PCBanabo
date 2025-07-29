@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronDown, LogOut, RefreshCw, X, Trash2 } from "lucide-react"; // Added X
+import { ChevronDown, LogOut, RefreshCw, X, Trash2, Home, FolderOpen, Users, Settings, Wrench } from "lucide-react"; // Added X
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
+import CustomAlert from "../components/common/CustomAlert";
 
 const Builds = () => {
     const [builds, setBuilds] = useState([]);
@@ -16,6 +17,46 @@ const Builds = () => {
     const [buildDetails, setBuildDetails] = useState(null);
     const [isLoadingDetails, setIsLoadingDetails] = useState(false); 
     const navigate = useNavigate();
+
+    // Custom Alert states
+    const [alert, setAlert] = useState({
+        isOpen: false,
+        type: 'info',
+        message: '',
+        onConfirm: null,
+        showCancel: false,
+        confirmText: 'OK',
+        cancelText: 'Cancel'
+    });
+
+    // Alert helper functions
+    const showAlert = (type, message, options = {}) => {
+        setAlert({
+            isOpen: true,
+            type,
+            message,
+            onConfirm: options.onConfirm || null,
+            showCancel: options.showCancel || false,
+            confirmText: options.confirmText || 'OK',
+            cancelText: options.cancelText || 'Cancel'
+        });
+    };
+
+    const closeAlert = () => {
+        setAlert(prev => ({ ...prev, isOpen: false }));
+    };
+
+    const showConfirm = (message, onConfirm, options = {}) => {
+        showAlert('confirm', message, {
+            onConfirm,
+            showCancel: true,
+            confirmText: options.confirmText || 'Yes',
+            cancelText: options.cancelText || 'No'
+        });
+    };
+
+    const showSuccess = (message) => showAlert('success', message);
+    const showError = (message) => showAlert('error', message);
 
 
     const handleDeleteBuild = (buildId) => {
@@ -123,12 +164,8 @@ const Builds = () => {
             setIsLoading(true);
             setError(null);
             
-            const res = await fetch(`/api/shared-builds`);
-            if (!res.ok) { 
-                throw new Error(`Failed to fetch builds: ${res.status} ${res.statusText}`); 
-            } 
-
-            const data = await res.json(); 
+            const res = await api.get(`/api/shared-builds`);
+            const data = res.data; 
             setBuilds(data);
             console.log("Received data:", data.length, "items");
             // console.log(data); 
@@ -398,25 +435,20 @@ const Builds = () => {
         const handleDelete = async (e) => {
         e.stopPropagation(); // Prevent triggering other click events
         
-        if (!window.confirm(`Are you sure you want to delete "${build.buildName}"? This action cannot be undone.`)) {
-            return;
-        }
-
-        try {
-            const res = await fetch(`/api/shared-builds/${build.id}`, {
-                method: 'DELETE'
-            });
-
-            if (res.ok) {
-                onDelete(build.id);
-                alert('Build deleted successfully!');
-            } else {
-                throw new Error(`Failed to delete build: ${res.status}`);
-            }
-        } catch (error) {
-            console.error('Error deleting build:', error);
-            alert('Failed to delete build. Please try again.');
-        }
+        showConfirm(
+            `Are you sure you want to delete "${build.buildName}"? This action cannot be undone.`,
+            async () => {
+                try {
+                    const res = await api.delete(`/api/shared-builds/${build.id}`);
+                    onDelete(build.id);
+                    showSuccess('Build deleted successfully!');
+                } catch (error) {
+                    console.error('Error deleting build:', error);
+                    showError('Failed to delete build. Please try again.');
+                }
+            },
+            { confirmText: 'Delete', cancelText: 'Cancel' }
+        );
     };
 
         return (
@@ -493,6 +525,7 @@ const Builds = () => {
                                 to="/dashboard"
                                 className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
+                                <Home size={18} className="mr-3" />
                                 Dashboard
                             </Link>
                         </li>
@@ -501,6 +534,7 @@ const Builds = () => {
                                 to="/builds/my"
                                 className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
+                                <FolderOpen size={18} className="mr-3" />
                                 My Builds
                             </Link>
                         </li>
@@ -509,6 +543,19 @@ const Builds = () => {
                                 to="/builds"
                                 className="flex items-center px-6 py-3 text-white bg-gray-700 transition-colors duration-200 rounded-r-full"
                             >
+                                <svg
+                                    className="mr-3 h-[18px] w-[18px]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                    />
+                                </svg>
                                 All Builds
                             </Link>
                         </li>
@@ -517,6 +564,7 @@ const Builds = () => {
                                 to="/users"
                                 className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
+                                <Users size={18} className="mr-3" />
                                 Users
                             </Link>
                         </li>
@@ -527,7 +575,10 @@ const Builds = () => {
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="flex justify-between items-center w-full px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
-                                <span className="font-medium">All Components</span>
+                                <div className="flex items-center">
+                                    <Settings size={18} className="mr-3" />
+                                    <span className="font-medium">All Components</span>
+                                </div>
                                 <ChevronDown
                                     className={`ml-2 h-4 w-4 transform transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : "rotate-0"}`}
                                 />
@@ -607,6 +658,7 @@ const Builds = () => {
                                 to="/configurator"
                                 className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
+                                <Wrench size={18} className="mr-3" />
                                 Launch Configurator
                             </Link>
                         </li>
@@ -734,6 +786,18 @@ const Builds = () => {
                         onClose={closeModal}
                     />
                 )}
+
+                {/* Custom Alert */}
+                <CustomAlert
+                    isOpen={alert.isOpen}
+                    onClose={closeAlert}
+                    onConfirm={alert.onConfirm}
+                    message={alert.message}
+                    type={alert.type}
+                    showCancel={alert.showCancel}
+                    confirmText={alert.confirmText}
+                    cancelText={alert.cancelText}
+                />
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ const getBaseURL = () => {
   }
   
   // Check if we're in Docker environment
-  if (import.meta.env.DOCKER === 'true' || process.env.DOCKER === 'true') {
+  if (import.meta.env.VITE_DOCKER === 'true' || process.env.NODE_ENV === 'production') {
     return ''; // Use relative URLs in Docker (nginx will proxy)
   }
   
@@ -17,7 +17,11 @@ const getBaseURL = () => {
 };
 
 const api = axios.create({
-  baseURL: getBaseURL()
+  baseURL: getBaseURL(),
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use(config => {
