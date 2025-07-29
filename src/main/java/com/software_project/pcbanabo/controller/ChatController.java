@@ -32,6 +32,11 @@ public class ChatController {
   @PostMapping 
   public ResponseEntity<ChatResponse> chat(@RequestBody @Valid ChatRequest req) {
     System.out.println("Received chat request: " + req.message());
+    System.out.println("Current page: " + req.currentPage());
+    System.out.println("Build context: " + req.buildContext());
+    System.out.println("User builds: " + req.userBuilds());
+    System.out.println("User context: " + req.userContext());
+    
     if(req.message() == null || req.message().isBlank()) {
       return ResponseEntity.badRequest().body(new ChatResponse("Message cannot be empty."));
     }
@@ -40,7 +45,16 @@ public class ChatController {
     }
     ///sanitize the input message
     String sanitizedMssg = HtmlUtils.htmlEscape(req.message()); //// Replaces special characters with HTML entities to prevent XSS attacks
-    String reply = chatService.ask(sanitizedMssg);
+    
+    // Pass additional context to the service
+    String reply = chatService.askWithContext(
+        sanitizedMssg, 
+        req.buildContext(), 
+        req.userBuilds(), 
+        req.currentPage(),
+        req.userContext()
+    );
+    
     return ResponseEntity.ok(new ChatResponse(reply));
   }
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronDown, LogOut, RefreshCw, X, Trash2 } from "lucide-react"; // Added X
+import { ChevronDown, LogOut, RefreshCw, X, Trash2 } from "lucide-react";
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
 
-const Builds = () => {
+const MyBuilds = () => {
     const [builds, setBuilds] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,7 +16,6 @@ const Builds = () => {
     const [buildDetails, setBuildDetails] = useState(null);
     const [isLoadingDetails, setIsLoadingDetails] = useState(false); 
     const navigate = useNavigate();
-
 
     const handleDeleteBuild = (buildId) => {
         setBuilds(prevBuilds => prevBuilds.filter(build => build.id !== buildId));
@@ -71,7 +70,6 @@ const Builds = () => {
         if (!componentId) return null;
         
         try {
-            // console.log("Calling : " + `/api/components/${componentType}s/${componentId}`);
             const res = await api.get(`/api/components/${componentType}s/${componentId}`);
             console.log(res.data); 
             return res.data;
@@ -82,58 +80,59 @@ const Builds = () => {
     };
 
     const fetchBuildDetails = async (build) => {
-    setIsLoadingDetails(true);
-    
-    try {
-        const detailPromises = [];
-        const componentTypes = ['cpu', 'gpu', 'motherboard', 'ram', 'ssd', 'psu', 'cpuCooler', 'casing'];
+        setIsLoadingDetails(true);
         
-        componentTypes.forEach(type => {
-            if (build[type + 'Id']) {
-                detailPromises.push(
-                    fetchComponentDetails(type === 'cpuCooler' ? 'cpu-cooler' : type, build[type + 'Id'])
-                        .then(details => ({ type, details }))
-                );
-            }
-        });
+        try {
+            const detailPromises = [];
+            const componentTypes = ['cpu', 'gpu', 'motherboard', 'ram', 'ssd', 'psu', 'cpuCooler', 'casing'];
+            
+            componentTypes.forEach(type => {
+                if (build[type + 'Id']) {
+                    detailPromises.push(
+                        fetchComponentDetails(type === 'cpuCooler' ? 'cpu-cooler' : type, build[type + 'Id'])
+                            .then(details => ({ type, details }))
+                    );
+                }
+            });
 
-        const results = await Promise.all(detailPromises);
-        // console.log(results);
-        
-        // This is where the issue is - you need to properly attach the details
-        const buildWithDetails = { ...build };
-        results.forEach(({ type, details }) => {
-            if (details) {
-                buildWithDetails[type] = details; // This should work
-            }
-        });
+            const results = await Promise.all(detailPromises);
+            
+            const buildWithDetails = { ...build };
+            results.forEach(({ type, details }) => {
+                if (details) {
+                    buildWithDetails[type] = details;
+                }
+            });
 
-        // console.log('Build with details:', buildWithDetails); // Add this to debug
-        setBuildDetails(buildWithDetails);
-    } catch (error) {
-        console.error('Error fetching build details:', error);
-        setError('Failed to load build details');
-    } finally {
-        setIsLoadingDetails(false);
-    }
-};
+            setBuildDetails(buildWithDetails);
+        } catch (error) {
+            console.error('Error fetching build details:', error);
+            setError('Failed to load build details');
+        } finally {
+            setIsLoadingDetails(false);
+        }
+    };
 
-    const fetchBuilds = async () => {
+    const fetchMyBuilds = async () => {
         try {
             setIsLoading(true);
             setError(null);
             
-            const res = await fetch(`/api/shared-builds`);
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                throw new Error('User not logged in');
+            }
+
+            const res = await fetch(`/api/shared-builds/${userId}`);
             if (!res.ok) { 
                 throw new Error(`Failed to fetch builds: ${res.status} ${res.statusText}`); 
             } 
 
             const data = await res.json(); 
             setBuilds(data);
-            console.log("Received data:", data.length, "items");
-            // console.log(data); 
+            console.log("Received user builds:", data.length, "items");
         } catch (error) {
-            console.error("Error fetching builds:", error);
+            console.error("Error fetching user builds:", error);
             setError(error.message);
         } finally {
             setIsLoading(false);
@@ -141,10 +140,8 @@ const Builds = () => {
     };
 
     useEffect(() => {
-        fetchBuilds();
+        fetchMyBuilds();
     }, []);
-
-    
 
     const handleLogout = () => {
         localStorage.clear();
@@ -296,7 +293,7 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.cpuCooler.model_name || 'N/A'}
                                         </p>
-                                        {(build.cpuCooler.avg_price || build.cpuCooler.price) && (
+                                        {build.cpuCooler.price && (
                                             <p className="text-gray-200">
                                                 <span className="font-medium">Price:</span> ৳{build.cpuCooler.avg_price || build.cpuCooler.price || 0}
                                             </p>
@@ -314,7 +311,7 @@ const Builds = () => {
                                         <p className="text-gray-200">
                                             <span className="font-medium">Model:</span> {build.casing.model_name || 'N/A'}
                                         </p>
-                                        {(build.casing.avg_price || build.casing.price) && (
+                                        {build.casing.price && (
                                             <p className="text-gray-200">
                                                 <span className="font-medium">Price:</span> ৳{build.casing.avg_price || build.casing.price || 0}
                                             </p>
@@ -331,23 +328,24 @@ const Builds = () => {
                                     <p className="text-gray-200">
                                         <span className="font-medium">Build ID:</span> {build.id}
                                     </p>
-                                    {(() => {
-                                        const totalPrice = 
-                                            (build.cpu ? (build.cpu.average_price || build.cpu.avg_price || build.cpu.price || 0) : 0) +
-                                            (build.gpu ? (build.gpu.avg_price || build.gpu.price || 0) : 0) +
-                                            (build.motherboard ? (build.motherboard.avg_price || build.motherboard.price || 0) : 0) +
-                                            (build.ram ? (build.ram.avg_price || build.ram.price || 0) : 0) +
-                                            (build.ssd ? (build.ssd.avg_price || build.ssd.price || 0) : 0) +
-                                            (build.psu ? (build.psu.avg_price || build.psu.price || 0) : 0) +
-                                            (build.cpuCooler ? (build.cpuCooler.avg_price || build.cpuCooler.price || 0) : 0) +
-                                            (build.casing ? (build.casing.avg_price || build.casing.price || 0) : 0);
-                                        
-                                        return totalPrice > 0 ? (
-                                            <p className="text-green-400 text-lg font-semibold mt-2">
-                                                <span className="font-medium">Total Price:</span> ৳{totalPrice.toLocaleString()}
-                                            </p>
-                                        ) : null;
-                                    })()}
+                                    <p className="text-gray-200">
+                                        <span className="font-medium">Visibility:</span> {build.public ? 'Public' : 'Private'}
+                                    </p>
+                                    {/* Total Price */}
+                                    <p className="text-green-400 font-semibold text-lg">
+                                        <span className="font-medium">Total Price:</span> ৳{
+                                            ['cpu', 'gpu', 'motherboard', 'ram', 'ssd', 'psu', 'cpuCooler', 'casing']
+                                                .reduce((total, component) => {
+                                                    const comp = build[component];
+                                                    if (!comp) return total;
+                                                    // CPU uses "average_price", others use "avg_price"
+                                                    const price = component === 'cpu' 
+                                                        ? (comp.average_price || comp.avg_price || comp.price || 0)
+                                                        : (comp.avg_price || comp.price || 0);
+                                                    return total + parseFloat(price);
+                                                }, 0).toFixed(0)
+                                        }
+                                    </p>
                                 </div>
                             </div>
                         )}
@@ -369,7 +367,7 @@ const Builds = () => {
     const LoadingSpinner = () => (
         <div className="flex flex-col items-center justify-center min-h-96 space-y-4">
             <div className="w-10 h-10 border-4 border-gray-600 border-t-purple-400 rounded-full animate-spin"></div>
-            <p className="text-gray-400 text-lg">Loading builds...</p>
+            <p className="text-gray-400 text-lg">Loading your builds...</p>
         </div>
     );
 
@@ -387,7 +385,7 @@ const Builds = () => {
         </div>
     );
 
-    // Fixed BuildCard with working View Details button
+    // BuildCard component
     const BuildCard = ({ build, onDelete }) => {
         const handleViewDetails = async () => {
             setSelectedBuild(build);
@@ -396,73 +394,79 @@ const Builds = () => {
         };
 
         const handleDelete = async (e) => {
-        e.stopPropagation(); // Prevent triggering other click events
-        
-        if (!window.confirm(`Are you sure you want to delete "${build.buildName}"? This action cannot be undone.`)) {
-            return;
-        }
-
-        try {
-            const res = await fetch(`/api/shared-builds/${build.id}`, {
-                method: 'DELETE'
-            });
-
-            if (res.ok) {
-                onDelete(build.id);
-                alert('Build deleted successfully!');
-            } else {
-                throw new Error(`Failed to delete build: ${res.status}`);
+            e.stopPropagation();
+            
+            if (!window.confirm(`Are you sure you want to delete "${build.buildName}"? This action cannot be undone.`)) {
+                return;
             }
-        } catch (error) {
-            console.error('Error deleting build:', error);
-            alert('Failed to delete build. Please try again.');
-        }
-    };
+
+            try {
+                const res = await fetch(`/api/shared-builds/${build.id}`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    onDelete(build.id);
+                    alert('Build deleted successfully!');
+                } else {
+                    throw new Error(`Failed to delete build: ${res.status}`);
+                }
+            } catch (error) {
+                console.error('Error deleting build:', error);
+                alert('Failed to delete build. Please try again.');
+            }
+        };
 
         return (
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-semibold text-gray-100 flex-1">{build.buildName}</h3>
-                <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded">
-                        ID: {build.id}
-                    </span>
-                    <button
-                        onClick={handleDelete}
-                        className="p-1 text-gray-400 hover:text-red-400 transition-colors"
-                        title="Delete build"
-                    >
-                        <Trash2 size={16} />
-                    </button>
-                </div>
-            </div>
-            
-            <div className="mb-6">
-                <div className="space-y-1 text-sm text-gray-400">
-                    {build.savedAt && (
-                        <span className="block">
-                            Created: {new Date(build.savedAt).toLocaleDateString()}
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-lg font-semibold text-gray-100 flex-1">{build.buildName}</h3>
+                    <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-1 rounded ${build.public ? 'bg-green-600 text-green-100' : 'bg-gray-600 text-gray-300'}`}>
+                            {build.public ? 'Public' : 'Private'}
                         </span>
-                    )}
+                        <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded">
+                            ID: {build.id}
+                        </span>
+                        <button
+                            onClick={handleDelete}
+                            className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                            title="Delete build"
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    </div>
+                </div>
+                
+                <div className="mb-6">
+                    <div className="space-y-1 text-sm text-gray-400">
+                        {build.savedAt && (
+                            <span className="block">
+                                Created: {new Date(build.savedAt).toLocaleDateString()}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                
+                <div className="flex gap-3">
+                    <button 
+                        onClick={handleViewDetails}
+                        className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                    >
+                        View Details
+                    </button>
+                    <Link
+                        to="/configurator"
+                        state={{ loadBuild: build }}
+                        className="flex-1 px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors font-medium border border-gray-600 text-center"
+                    >
+                        Edit Build
+                    </Link>
                 </div>
             </div>
-            
-            <div className="flex gap-3">
-                <button 
-                    onClick={handleViewDetails}
-                    className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
-                >
-                    View Details
-                </button>
-                <button className="flex-1 px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors font-medium border border-gray-600">
-                    Copy Build
-                </button>
-            </div>
-        </div>
-    );
+        );
     };
 
-    // Close modal function
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedBuild(null);
@@ -499,7 +503,7 @@ const Builds = () => {
                         <li className="mb-1">
                             <Link
                                 to="/builds/my"
-                                className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
+                                className="flex items-center px-6 py-3 text-white bg-gray-700 transition-colors duration-200 rounded-r-full"
                             >
                                 My Builds
                             </Link>
@@ -507,7 +511,7 @@ const Builds = () => {
                         <li className="mb-1">
                             <Link
                                 to="/builds"
-                                className="flex items-center px-6 py-3 text-white bg-gray-700 transition-colors duration-200 rounded-r-full"
+                                className="flex items-center px-6 py-3 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-r-full"
                             >
                                 All Builds
                             </Link>
@@ -619,12 +623,12 @@ const Builds = () => {
                 {/* TOP BAR */}
                 <header className="flex justify-between items-center bg-gray-800 border-b border-gray-700 px-8 h-16 shadow-sm">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-100">Community Builds</h2>
+                        <h2 className="text-xl font-semibold text-gray-100">My Builds</h2>
                     </div>
                     <div className="flex items-center space-x-4">
                         {/* Refresh button */}
                         <button
-                            onClick={fetchBuilds}
+                            onClick={fetchMyBuilds}
                             disabled={isLoading}
                             className="flex items-center space-x-1 text-gray-200 hover:text-purple-400 transition-colors duration-200 disabled:opacity-50"
                         >
@@ -680,7 +684,7 @@ const Builds = () => {
                                         {builds.length}
                                     </div>
                                     <div className="text-sm text-gray-400">
-                                        Total Builds
+                                        Your Builds
                                     </div>
                                 </div>
                             </div>
@@ -690,16 +694,16 @@ const Builds = () => {
                                 <div className="text-center py-16">
                                     <div className="text-6xl mb-6">🖥️</div>
                                     <h3 className="text-xl font-semibold text-gray-100 mb-3">
-                                        No builds found
+                                        No builds yet
                                     </h3>
                                     <p className="text-gray-400 mb-8">
-                                        Be the first to share a build with the community!
+                                        Start building your dream PC!
                                     </p>
                                     <Link
                                         to="/configurator"
                                         className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
                                     >
-                                        Create Build
+                                        Create Your First Build
                                     </Link>
                                 </div>
                             ) : (
@@ -722,12 +726,13 @@ const Builds = () => {
                     <div className="fixed right-0 top-0 bottom-0 z-40 h-full">
                         <ChatSidebar
                             onClose={() => setIsChatOpen(false)}
-                            currentPage="/builds"
+                            userBuilds={builds}
+                            currentPage="/builds/my"
                         />
                     </div>
                 )}
 
-                {/* Add the modal at the end before closing div */}
+                {/* Modal */}
                 {isModalOpen && (
                     <BuildDetailsModal 
                         build={buildDetails || selectedBuild} 
@@ -739,4 +744,4 @@ const Builds = () => {
     );
 };
 
-export default Builds;
+export default MyBuilds;

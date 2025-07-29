@@ -43,5 +43,9 @@ public class UserInfoService implements UserDetailsService {
         return userRepository.findById(id)
                    .orElseThrow(() -> new UsernameNotFoundException("No user with id: " + id));
     }
+
+    public List<UserInfo> getAllUsers() {
+        return userRepository.findAll();
+    }
     
 }

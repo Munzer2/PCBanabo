@@ -1,5 +1,8 @@
 package com.software_project.pcbanabo.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,5 +34,23 @@ public class UserController {
         dto.setUserType("USER");
 
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserInfo> users = userService.getAllUsers();
+        
+        List<UserDto> userDtos = users.stream()
+            .map(user -> {
+                UserDto dto = new UserDto();
+                dto.setId(user.getId());
+                dto.setUserName(user.getUsername());
+                dto.setEmail(user.getEmail());
+                dto.setUserType("USER");
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(userDtos);
     }
 }

@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
 import { Computer, ArrowLeft, User, LogOut, Save } from 'lucide-react';
 import ComponentSlot from '../components/configurator/ComponentSlot';
+import ChatSidebar from '../components/ChatBot/ChatSidebar';
 
 const initialComponents = {
   casing: null,
@@ -25,6 +26,8 @@ export default function Configurator() {
   const [user, setUser] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [buildName, setBuildName] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -145,6 +148,11 @@ export default function Configurator() {
 
   // Handle saving the build
   const handleSaveBuild = async () => {
+    if (!buildName.trim()) {
+      alert('Please enter a build name before saving.');
+      return;
+    }
+
     try {
       const buildData = {
         userId: localStorage.getItem('userId'),
@@ -170,7 +178,7 @@ export default function Configurator() {
         psuId:    buildData.components.psu, 
         casingId:    buildData.components.casing, 
         cpuCoolerId:    buildData.components.cpuCooler,
-        buildName:      `My build (${new Date().toLocaleDateString()})`,
+        buildName:      buildName.trim(),
         public:       true 
       };
 
@@ -230,47 +238,68 @@ export default function Configurator() {
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isChatOpen ? 'lg:mr-80' : 'mr-0'}`}>
         {/* Top Navigation Bar */}
-        <header className="flex justify-between items-center bg-slate-800 border-b border-gray-700 px-8 h-16 shadow-md">
+        <header className="flex justify-between items-center bg-slate-800 border-b border-gray-700 px-4 sm:px-8 h-16 shadow-md">
           <div className="flex items-center gap-2">
             <button 
               onClick={() => handleNavigation('/dashboard')} 
               className="flex items-center text-blue-400 hover:text-blue-300 transition"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Dashboard
+              <span className="hidden sm:inline">Dashboard</span>
             </button>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
+            {/* Chat toggle button */}
+            <button
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              className="flex items-center text-gray-300 hover:text-blue-400 transition"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="sm:mr-2"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span className="hidden sm:inline">Chat</span>
+            </button>
             <button 
               onClick={() => handleNavigation('/profile')} 
               className="flex items-center text-gray-300 hover:text-blue-400 transition"
             >
-              <User size={18} className="mr-2" />
-              Profile
+              <User size={18} className="sm:mr-2" />
+              <span className="hidden sm:inline">Profile</span>
             </button>
             <button 
               onClick={handleLogout} 
               className="flex items-center text-gray-300 hover:text-red-400 transition"
             >
-              <LogOut size={18} className="mr-2" />
-              Logout
+              <LogOut size={18} className="sm:mr-2" />
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </header>
 
         {/* Configurator Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-900">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-6 bg-slate-900">
           <div className="max-w-5xl mx-auto">
             {/* Header */}
-            <div className="mb-8 text-center">
-              <h1 className="text-3xl font-bold text-white">Configurator</h1>
-              <p className="text-gray-400 mt-2">Select compatible components for your custom build</p>
+            <div className="mb-6 sm:mb-8 text-center">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">Configurator</h1>
+              <p className="text-gray-400 mt-2 text-sm sm:text-base">Select compatible components for your custom build</p>
             </div>
 
             {/* Component Selection Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {Object.entries(components).map(([type, component]) => (
                 <ComponentSlot 
                   key={type}
@@ -282,19 +311,48 @@ export default function Configurator() {
               ))}
             </div>
 
+            {/* Build Name Input */}
+            <div className="mb-6 sm:mb-8">
+              <div className="max-w-md mx-auto">
+                <label htmlFor="buildName" className="block text-sm font-medium text-gray-300 mb-2">
+                  Build Name
+                </label>
+                <input
+                  type="text"
+                  id="buildName"
+                  value={buildName}
+                  onChange={(e) => setBuildName(e.target.value)}
+                  placeholder="Enter a name for your build..."
+                  className="w-full px-3 sm:px-4 py-2 bg-slate-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  maxLength={100}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {buildName.length}/100 characters
+                </p>
+              </div>
+            </div>
+
             {/* Build Actions */}
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-6 sm:mt-8">
               <button
                 onClick={handleSaveBuild}
-                className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
+                className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-md transition transform hover:scale-105 text-sm sm:text-base"
               >
-                <Save size={20} className="mr-2" />
+                <Save size={18} className="mr-2" />
                 Save Build
               </button>
             </div>
           </div>
         </main>
       </div>
+      
+      {/* ChatSidebar - Only show on larger screens when open, overlay on mobile */}
+      <ChatSidebar 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)}
+        buildContext={components}
+        currentPage="/configurator"
+      />
     </div>
   );
 }
