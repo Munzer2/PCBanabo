@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import GpuItem from "../../components/lists/items/GpuItem";
 import GpuSidebar from "../../components/lists/sidebars/GpuSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "price",
@@ -16,6 +18,8 @@ const sliders = [
 export default function GPU() {
   const [gpus, setGpus] = useState([]);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -117,6 +121,12 @@ export default function GPU() {
     }
   };
 
+  // Filter and sort GPUs based on search term and sort option
+  const filteredAndSortedGPUs = useMemo(() => {
+    const filtered = filterComponentsBySearch(gpus, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [gpus, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <GpuSidebar onApply={handleApplyFilters} />
@@ -153,11 +163,20 @@ export default function GPU() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available GPUs
             </h1>
-            {gpus.length === 0 ? (
-              <p className="text-center text-gray-400">No GPUs found.</p>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search GPUs by name, brand, or series..."
+            />
+            {filteredAndSortedGPUs.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {gpus.length === 0 ? "No GPUs found." : "No GPUs match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {gpus.map((gpu) => (
+                {filteredAndSortedGPUs.map((gpu) => (
                   <GpuItem 
                     key={gpu.id || gpu._id} 
                     gpu={gpu} 

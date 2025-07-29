@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, ChevronDown, ChevronUp, Filter, User, LogOut } from "lucide-react";
 import CpuCoolerItem from "../../components/lists/items/CpuCoolerItem";
 import CpuCoolerSidebar from "../../components/lists/sidebars/CpuCoolerSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 export default function CpuCooler() {
   const [cpuCoolers, setCpuCoolers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -129,6 +133,12 @@ export default function CpuCooler() {
     navigate("/login", { replace: true });
   };
 
+  // Filter and sort CPU Coolers based on search term and sort option
+  const filteredAndSortedCpuCoolers = useMemo(() => {
+    const filtered = filterComponentsBySearch(cpuCoolers, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [cpuCoolers, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       {/* Sidebar */}
@@ -171,6 +181,13 @@ export default function CpuCooler() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available CPU Coolers
             </h1>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search CPU coolers by name, brand, or series..."
+            />
             
             {loading ? (
               <div className="flex justify-center items-center h-64">
@@ -180,9 +197,13 @@ export default function CpuCooler() {
               <div className="bg-red-900/30 border border-red-800 text-red-200 p-4 rounded-md">
                 <p>{error}</p>
               </div>
+            ) : filteredAndSortedCpuCoolers.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {cpuCoolers.length === 0 ? "No CPU coolers found." : "No CPU coolers match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cpuCoolers.map((cooler) => (
+                {filteredAndSortedCpuCoolers.map((cooler) => (
                   <CpuCoolerItem 
                     key={cooler.id} 
                     cpuCooler={cooler}

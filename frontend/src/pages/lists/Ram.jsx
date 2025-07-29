@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import RamSidebar from "../../components/lists/sidebars/RamSidebar";
 import RamItem from "../../components/lists/items/RamItem";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = ["price", "speed"];
 
@@ -11,6 +13,8 @@ export default function Ram() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -128,6 +132,12 @@ export default function Ram() {
     }
   };
 
+  // Filter and sort RAMs based on search term and sort option
+  const filteredAndSortedRams = useMemo(() => {
+    const filtered = filterComponentsBySearch(rams, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [rams, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <RamSidebar onApply={handleApplyFilters} />
@@ -164,11 +174,20 @@ export default function Ram() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available RAM Modules
             </h1>
-            {rams.length === 0 ? (
-              <p className="text-center text-gray-400">No RAM modules found.</p>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search RAM by name, brand, or series..."
+            />
+            {filteredAndSortedRams.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {rams.length === 0 ? "No RAM modules found." : "No RAM modules match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rams.map((ram) => (
+                {filteredAndSortedRams.map((ram) => (
                   <RamItem 
                     key={ram.id || ram._id} 
                     ram={ram} 

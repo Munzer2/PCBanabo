@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import CPUItem from "../../components/lists/items/CPUItem";
 import CpuSidebar from "../../components/lists/sidebars/CpuSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "cores",
@@ -16,6 +18,8 @@ const sliders = [
 export default function CPU() {
   const [CPUs, setCPUs] = useState([]);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -149,6 +153,12 @@ export default function CPU() {
     }
   };
 
+  // Filter and sort CPUs based on search term and sort option
+  const filteredAndSortedCPUs = useMemo(() => {
+    const filtered = filterComponentsBySearch(CPUs, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [CPUs, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <CpuSidebar onApply={handleApplyFilters} />
@@ -185,11 +195,20 @@ export default function CPU() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available CPUs
             </h1>
-            {CPUs.length === 0 ? (
-              <p className="text-center text-gray-400">No CPUs found.</p>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search CPUs by name, brand, or series..."
+            />
+            {filteredAndSortedCPUs.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {CPUs.length === 0 ? "No CPUs found." : "No CPUs match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {CPUs.map((cpu) => (
+                {filteredAndSortedCPUs.map((cpu) => (
                   <CPUItem 
                     key={cpu.id || cpu._id} 
                     cpu={cpu} 
