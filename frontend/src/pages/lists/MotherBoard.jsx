@@ -5,6 +5,7 @@ import MotherboardItem from "../../components/lists/items/MotherboardItem";
 import MotherboardSidebar from "../../components/lists/sidebars/MotherboardSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 export default function MotherBoard() {
   const [motherboards, setMotherboards] = useState([]);
@@ -101,13 +102,8 @@ export default function MotherBoard() {
         
 
         console.log("Making API call to:", url);
-        const res = await fetch(url);
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch motherboards");
-        }
-
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("Received data:", data.length, "items");
         setMotherboards(data);
         setLoading(false);

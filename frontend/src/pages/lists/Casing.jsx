@@ -5,6 +5,7 @@ import CasingSidebar from "../../components/lists/sidebars/CasingSidebar";
 import CasingItem from "../../components/lists/items/CasingItem";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = [
   "cpu",
@@ -89,15 +90,8 @@ export default function Casing() {
 
 
         console.log("Making API call to:", url);
-        const res = await fetch(url);
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("API error:", res.status, errorText);
-          throw new Error(`API error: ${res.status}`);
-        }
-        
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("Received data:", data.length, "items");
         setCasings(data);
         setLoading(false); // End loading state

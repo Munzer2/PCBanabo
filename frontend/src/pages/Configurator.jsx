@@ -5,6 +5,7 @@ import api from '../api';
 import { Computer, ArrowLeft, User, LogOut, Save, Sparkles, X } from 'lucide-react';
 import ComponentSlot from '../components/configurator/ComponentSlot';
 import ChatSidebar from '../components/ChatBot/ChatSidebar';
+import CustomAlert from '../components/common/CustomAlert';
 
 const initialComponents = {
   casing: null,
@@ -38,6 +39,48 @@ export default function Configurator() {
     useCase: '',
     preferences: ''
   });
+  
+  // Custom Alert states
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    type: 'info',
+    message: '',
+    onConfirm: null,
+    showCancel: false,
+    confirmText: 'OK',
+    cancelText: 'Cancel'
+  });
+  
+  // Alert helper functions
+  const showAlert = (type, message, options = {}) => {
+    setAlert({
+      isOpen: true,
+      type,
+      message,
+      onConfirm: options.onConfirm || null,
+      showCancel: options.showCancel || false,
+      confirmText: options.confirmText || 'OK',
+      cancelText: options.cancelText || 'Cancel'
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const showConfirm = (message, onConfirm, options = {}) => {
+    showAlert('confirm', message, {
+      onConfirm,
+      showCancel: true,
+      confirmText: options.confirmText || 'Yes',
+      cancelText: options.cancelText || 'No'
+    });
+  };
+
+  const showSuccess = (message) => showAlert('success', message);
+  const showError = (message) => showAlert('error', message);
+  const showWarning = (message) => showAlert('warning', message);
+  const showInfo = (message) => showAlert('info', message);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,7 +126,7 @@ export default function Configurator() {
         
         // Try to fetch user data, but don't fail if it doesn't work
         try {
-          const res = await api.get(`/users/${userId}`);
+          const res = await api.get(`/api/users/${userId}`);
           clearTimeout(timeout);
           setUser(res.data);
           setIsLoading(false);
@@ -160,7 +203,7 @@ export default function Configurator() {
   // Handle saving the build
   const handleSaveBuild = async () => {
     if (!buildName.trim()) {
-      alert('Please enter a build name before saving.');
+      showWarning('Please enter a build name before saving.');
       return;
     }
 
@@ -195,25 +238,15 @@ export default function Configurator() {
 
       console.log(dto);
 
-      const res = await fetch(
-        `/api/shared-builds/${buildData.userId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type' : 'application/json' },
-          body:   JSON.stringify(dto)
-        }
-      ); 
-
-      if(!res.ok) throw new Error(`Error saving the build with status: ${res.status}`); 
-
-      const saved = await res.json(); 
+      const res = await api.post(`/api/shared-builds/${buildData.userId}`, dto);
+      const saved = res.data;
       console.log('Build has been saved on server: ', saved); 
       
       setHasChanges(false);
-      alert('Build saved successfully!');
+      showSuccess('Build saved successfully!');
     } catch (error) {
       console.error('Error saving build:', error);
-      alert('Failed to save build. Please try again.');
+      showError('Failed to save build. Please try again.');
     }
   };
 
@@ -225,7 +258,7 @@ export default function Configurator() {
 
   const handleGenerateAIBuild = async () => {
     if (!buildPreferences.budget.trim()) {
-      alert('Please specify a budget for the AI build suggestion.');
+      showWarning('Please specify a budget for the AI build suggestion.');
       return;
     }
 
@@ -300,7 +333,7 @@ export default function Configurator() {
         errorMessage += error.message || 'Unknown error occurred.';
       }
       
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setIsGeneratingBuild(false);
     }
@@ -341,20 +374,52 @@ export default function Configurator() {
   // Handle navigation with unsaved changes warning
   const handleNavigation = (path) => {
     if (hasChanges) {
-      const confirm = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-      if (!confirm) return;
+      showConfirm(
+        'You have unsaved changes. Are you sure you want to leave?',
+        () => navigate(path),
+        { confirmText: 'Leave', cancelText: 'Stay' }
+      );
+    } else {
+      navigate(path);
     }
-    navigate(path);
   };
 
   // Handle logout with unsaved changes warning
   const handleLogout = () => {
     if (hasChanges) {
-      const confirm = window.confirm('You have unsaved changes. Are you sure you want to logout?');
-      if (!confirm) return;
+      showConfirm(
+        'You have unsaved changes. Are you sure you want to logout?',
+        () => {
+          localStorage.clear();
+          navigate('/login', { replace: true });
+        },
+        { confirmText: 'Logout', cancelText: 'Stay' }
+      );
+    } else {
+      localStorage.clear();
+      navigate('/login', { replace: true });
     }
-    localStorage.clear();
-    navigate('/login', { replace: true });
+  };
+
+  // Handle clearing all selections
+  const handleClearAllSelections = () => {
+    const hasAnyComponent = Object.values(components).some(component => component !== null);
+    
+    if (!hasAnyComponent) {
+      showInfo('No components to clear.');
+      return;
+    }
+
+    showConfirm(
+      'Are you sure you want to clear all selected components? This action cannot be undone.',
+      () => {
+        setComponents(initialComponents);
+        setBuildName('');
+        setHasChanges(false);
+        showSuccess('All components have been cleared successfully.');
+      },
+      { confirmText: 'Clear All', cancelText: 'Cancel' }
+    );
   };
 
   // Invalid user data or still loading
@@ -472,6 +537,13 @@ export default function Configurator() {
               >
                 <Sparkles size={18} className="mr-2" />
                 Build with AI
+              </button>
+              <button
+                onClick={handleClearAllSelections}
+                className="flex items-center bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-md transition transform hover:scale-105 text-sm sm:text-base"
+              >
+                <X size={18} className="mr-2" />
+                Clear All Selections
               </button>
               <button
                 onClick={handleSaveBuild}
@@ -655,6 +727,18 @@ export default function Configurator() {
         onClose={() => setIsChatOpen(false)}
         buildContext={components}
         currentPage="/configurator"
+      />
+
+      {/* Custom Alert */}
+      <CustomAlert
+        isOpen={alert.isOpen}
+        onClose={closeAlert}
+        onConfirm={alert.onConfirm}
+        message={alert.message}
+        type={alert.type}
+        showCancel={alert.showCancel}
+        confirmText={alert.confirmText}
+        cancelText={alert.cancelText}
       />
     </div>
   );

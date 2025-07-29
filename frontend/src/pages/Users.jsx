@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronDown, LogOut, RefreshCw, User, Mail, Calendar, Users as UsersIcon, X, Eye } from "lucide-react";
+import { ChevronDown, LogOut, RefreshCw, User, Mail, Calendar, Users as UsersIcon, X, Eye, Home, FolderOpen, Settings, Wrench } from "lucide-react";
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
 
@@ -115,14 +115,9 @@ const Users = () => {
             setSelectedUser({ id: userId, userName });
             setIsModalOpen(true);
             
-            const token = localStorage.getItem('token');
-            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-            
-            const response = await fetch(`/api/shared-builds/${userId}`, { headers });
-            
-            if (response.ok) {
-                const builds = await response.json();
-                const buildsArray = Array.isArray(builds) ? builds : [];
+            const response = await api.get(`/api/shared-builds/${userId}`);
+            const builds = response.data;
+            const buildsArray = Array.isArray(builds) ? builds : [];
                 
                 // Calculate total price for each build
                 const buildsWithPrices = await Promise.all(
@@ -144,14 +139,12 @@ const Users = () => {
                         for (const component of componentTypes) {
                             if (component.id) {
                                 try {
-                                    const componentRes = await fetch(`/api/components/${component.type}s/${component.id}`, { headers });
-                                    if (componentRes.ok) {
-                                        const componentData = await componentRes.json();
-                                        // Different components use different field names:
-                                        // CPU uses "average_price", others use "avg_price"
-                                        const price = componentData.average_price || componentData.avg_price || componentData.avgPrice || componentData.price || 0;
-                                        totalPrice += parseFloat(price);
-                                    }
+                                    const componentRes = await api.get(`/api/components/${component.type}s/${component.id}`);
+                                    const componentData = componentRes.data;
+                                    // Different components use different field names:
+                                    // CPU uses "average_price", others use "avg_price"
+                                    const price = componentData.average_price || componentData.avg_price || componentData.avgPrice || componentData.price || 0;
+                                    totalPrice += parseFloat(price);
                                 } catch (error) {
                                     console.error(`Error fetching ${component.type} price:`, error);
                                 }
@@ -166,10 +159,6 @@ const Users = () => {
                 );
                 
                 setUserBuilds(buildsWithPrices);
-            } else {
-                console.error('Failed to fetch user builds:', response.status);
-                setUserBuilds([]);
-            }
         } catch (error) {
             console.error('Error fetching user builds:', error);
             setUserBuilds([]);
@@ -217,6 +206,7 @@ const Users = () => {
                                     transition-colors duration-200 rounded-r-full
                                 "
                             >
+                                <Home size={18} className="mr-3" />
                                 Dashboard
                             </Link>
                         </li>
@@ -229,6 +219,7 @@ const Users = () => {
                                     transition-colors duration-200 rounded-r-full
                                 "
                             >
+                                <FolderOpen size={18} className="mr-3" />
                                 My Builds
                             </Link>
                         </li>
@@ -241,6 +232,19 @@ const Users = () => {
                                     transition-colors duration-200 rounded-r-full
                                 "
                             >
+                                <svg
+                                    className="mr-3 h-[18px] w-[18px]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                    />
+                                </svg>
                                 All Builds
                             </Link>
                         </li>
@@ -253,7 +257,7 @@ const Users = () => {
                                     transition-colors duration-200 rounded-r-full
                                 "
                             >
-                                <UsersIcon className="mr-2 h-5 w-5" />
+                                <UsersIcon size={18} className="mr-3" />
                                 Users
                             </Link>
                         </li>
@@ -268,7 +272,10 @@ const Users = () => {
                                     transition-colors duration-200 rounded-r-full
                                 "
                             >
-                                <span className="font-medium">All Components</span>
+                                <div className="flex items-center">
+                                    <Settings size={18} className="mr-3" />
+                                    <span className="font-medium">All Components</span>
+                                </div>
                                 <ChevronDown
                                     className={`
                                         ml-2 h-4 w-4 transform 

@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Home, FolderOpen, Users, Settings, Wrench } from "lucide-react";
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
 
@@ -22,67 +22,58 @@ export default function Dashboard() {
   const fetchUserStats = async (userId) => {
     try {
       
-      // Get the token for authentication
-      const token = localStorage.getItem('token');
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-      
-      
       // Use the correct API endpoint from the backend
-      const buildsRes = await fetch(`/api/shared-builds/${userId}`, { headers });
-      const trendsRes = await fetch(`/api/shared-builds`, { headers });
+      const buildsRes = await api.get(`/api/shared-builds/${userId}`);
+      const trendsRes = await api.get(`/api/shared-builds`);
       
+      const builds = buildsRes.data;
       
-      if (buildsRes.ok) {
-        const builds = await buildsRes.json();
+      // Ensure builds is an array
+      const buildsArray = Array.isArray(builds) ? builds : [];
+      setRecentBuilds(buildsArray);
+      
+      // Calculate total value by fetching component prices
+      let totalValue = 0;
+      
+      for (const build of buildsArray) {
+        let buildPrice = 0;
         
-        // Ensure builds is an array
-        const buildsArray = Array.isArray(builds) ? builds : [];
-        setRecentBuilds(buildsArray);
+        // Fetch prices for each component type
+        const componentTypes = [
+          { type: 'cpu', id: build.cpuId },
+          { type: 'gpu', id: build.gpuId },
+          { type: 'motherboard', id: build.motherboardId },
+          { type: 'ram', id: build.ramId },
+          { type: 'ssd', id: build.ssdId },
+          { type: 'psu', id: build.psuId },
+          { type: 'casing', id: build.casingId },
+          { type: 'cpu-cooler', id: build.cpuCoolerId }
+        ];
         
-        // Calculate total value by fetching component prices
-        let totalValue = 0;
-        
-        for (const build of buildsArray) {
-          let buildPrice = 0;
-          
-          // Fetch prices for each component type
-          const componentTypes = [
-            { type: 'cpu', id: build.cpuId },
-            { type: 'gpu', id: build.gpuId },
-            { type: 'motherboard', id: build.motherboardId },
-            { type: 'ram', id: build.ramId },
-            { type: 'ssd', id: build.ssdId },
-            { type: 'psu', id: build.psuId },
-            { type: 'casing', id: build.casingId },
-            { type: 'cpu-cooler', id: build.cpuCoolerId }
-          ];
-          
-          for (const component of componentTypes) {
-            if (component.id) {
-              try {
-                const componentRes = await fetch(`/api/components/${component.type}s/${component.id}`, { headers });
-                if (componentRes.ok) {
-                  const componentData = await componentRes.json();
-                  // Different components use different field names:
-                  // CPU uses "average_price", others use "avg_price"
-                  const price = componentData.average_price || componentData.avg_price || componentData.avgPrice || componentData.price || 0;
-                  buildPrice += parseFloat(price);
-                }
-              } catch (error) {
-                console.error(`Error fetching ${component.type} price:`, error);
-              }
+        for (const component of componentTypes) {
+          if (component.id) {
+            try {
+              const componentRes = await api.get(`/api/components/${component.type}s/${component.id}`);
+              const componentData = componentRes.data;
+              // Different components use different field names:
+              // CPU uses "average_price", others use "avg_price"
+              const price = componentData.average_price || componentData.avg_price || componentData.avgPrice || componentData.price || 0;
+              buildPrice += parseFloat(price);
+            } catch (error) {
+              console.error(`Error fetching ${component.type} price:`, error);
             }
           }
-          
-          totalValue += buildPrice;
         }
         
-        
-        setUserStats({
-          totalBuilds: buildsArray.length,
-          totalValue: Math.round(totalValue),
-          publicBuilds: buildsArray.filter(b => b.public === true || b.isPublic === true).length
-        });
+        totalValue += buildPrice;
+      }
+      
+      
+      setUserStats({
+        totalBuilds: buildsArray.length,
+        totalValue: Math.round(totalValue),
+        publicBuilds: buildsArray.filter(b => b.public === true || b.isPublic === true).length
+      });
         
         // Generate realistic activity data based on actual builds
         const activityData = [];
@@ -119,33 +110,10 @@ export default function Dashboard() {
         }
         
         setUserActivity(activityData);
-      } else {
-        console.error('Failed to fetch user builds:', buildsRes.status, buildsRes.statusText);
-        const errorText = await buildsRes.text();
-        console.error('Error details:', errorText);
-        
-        // Set empty data if API fails
-        setUserStats({
-          totalBuilds: 0,
-          totalValue: 0,
-          publicBuilds: 0
-        });
-        setRecentBuilds([]);
-        setUserActivity([{ 
-          action: "Unable to load builds - check connection", 
-          timestamp: "Now", 
-          type: "error" 
-        }]);
-      }
       
-      if (trendsRes.ok) {
-        const allBuilds = await trendsRes.json();
-        const buildsArray = Array.isArray(allBuilds) ? allBuilds : [];
-        setTrendingBuilds(buildsArray.slice(0, 5));
-      } else {
-        console.error('Failed to fetch trending builds');
-        setTrendingBuilds([]);
-      }
+      const allBuilds = trendsRes.data;
+      const trendingBuildsArray = Array.isArray(allBuilds) ? allBuilds : [];
+      setTrendingBuilds(trendingBuildsArray.slice(0, 5));
     } catch (error) {
       console.error('Error fetching user stats:', error);
       // Set fallback data
@@ -220,6 +188,19 @@ export default function Dashboard() {
           <ul>
             <li className="mb-1">
               <Link
+                to="/dashboard"
+                className="
+                  flex items-center px-6 py-3 
+                  text-white bg-gray-700
+                  transition-colors duration-200 rounded-r-full
+                "
+              >
+                <Home size={18} className="mr-3" />
+                Dashboard
+              </Link>
+            </li>
+            <li className="mb-1">
+              <Link
                 to="/builds/my"
                 className="
                   flex items-center px-6 py-3 
@@ -227,6 +208,7 @@ export default function Dashboard() {
                   transition-colors duration-200 rounded-r-full
                 "
               >
+                <FolderOpen size={18} className="mr-3" />
                 My Builds
               </Link>
             </li>
@@ -239,6 +221,19 @@ export default function Dashboard() {
                   transition-colors duration-200 rounded-r-full
                 "
               >
+                <svg
+                  className="mr-3 h-[18px] w-[18px]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
                 All Builds
               </Link>
             </li>
@@ -251,6 +246,7 @@ export default function Dashboard() {
                   transition-colors duration-200 rounded-r-full
                 "
               >
+                <Users size={18} className="mr-3" />
                 Users
               </Link>
             </li>
@@ -265,7 +261,10 @@ export default function Dashboard() {
                   transition-colors duration-200 rounded-r-full
                 "
               >
-                <span className="font-medium">All Components</span>
+                <div className="flex items-center">
+                  <Settings size={18} className="mr-3" />
+                  <span className="font-medium">All Components</span>
+                </div>
                 <ChevronDown
                   className={`
                     ml-2 h-4 w-4 transform 
@@ -385,6 +384,7 @@ export default function Dashboard() {
                   transition-colors duration-200 rounded-r-full
                 "
               >
+                <Wrench size={18} className="mr-3" />
                 Launch Configurator
               </Link>
             </li>

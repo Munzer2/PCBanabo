@@ -5,6 +5,7 @@ import CpuCoolerItem from "../../components/lists/items/CpuCoolerItem";
 import CpuCoolerSidebar from "../../components/lists/sidebars/CpuCoolerSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 export default function CpuCooler() {
   const [cpuCoolers, setCpuCoolers] = useState([]);
@@ -87,16 +88,9 @@ export default function CpuCooler() {
           ? `/api/components/cpu-coolers/filtered?${query}`
           : `/api/components/cpu-coolers`;
 
-        console.log(url); 
-        
         console.log("Making API call to:", url);
-        const res = await fetch(url);
-        
-        if (!res.ok) {
-          throw new Error("Failed to fetch CPU coolers");
-        }
-        
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("Received data:", data.length, "items");
         setCpuCoolers(data);
         setLoading(false);

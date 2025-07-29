@@ -5,6 +5,7 @@ import CPUItem from "../../components/lists/items/CPUItem";
 import CpuSidebar from "../../components/lists/sidebars/CpuSidebar";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = [
   "cores",
@@ -126,8 +127,8 @@ export default function CPU() {
           ? `/api/components/cpus/filtered?${query}` : `/api/components/cpus`; 
 
         console.log("CPU Page: Final API call URL:", url);
-        const res = await fetch(url);
-        const data = await res.json();
+        const res = await api.get(url);
+        const data = res.data;
         console.log("CPU Page: Data received:", data.length, "items");
         setCPUs(data);
         setLoading(false);

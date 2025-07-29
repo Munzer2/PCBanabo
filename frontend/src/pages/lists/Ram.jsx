@@ -5,6 +5,7 @@ import RamSidebar from "../../components/lists/sidebars/RamSidebar";
 import RamItem from "../../components/lists/items/RamItem";
 import SearchAndSort from "../../components/common/SearchAndSort";
 import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
+import api from "../../api";
 
 const sliders = ["price", "speed"];
 
@@ -78,11 +79,7 @@ export default function Ram() {
   useEffect(() => {
     const fetchRams = async () => {
       try {
-        // const query = buildQueryParams(filters);
-        // const url = Object.keys(filters).length
-        //   ? `/api/components/rams/filtered?${query}`
-        //   : `/api/components/rams`;
-
+        setLoading(true);
         const effectiveFilters = {...filters};
         console.log(selectedComponents?.motherboard); 
         if(selectedComponents?.motherboard?.mem_type) {
@@ -93,13 +90,16 @@ export default function Ram() {
           ? `/api/components/rams/filtered?${query}`
           : `/api/components/rams`;
 
-        console.log(url);
-
-        const res = await fetch(url);
-        const data = await res.json();
+        console.log("New API call:", url);
+        const res = await api.get(url);
+        const data = res.data;
+        console.log("Data received from new query:", data);
         setRams(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching RAM modules:", error);
+        setError(error.message);
+        setLoading(false);
       }
     };
 
@@ -184,6 +184,16 @@ export default function Ram() {
             {loading ? (
               <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
+            ) : error ? (
+              <div className="text-center text-red-400 py-8">
+                <p>Error loading RAM modules: {error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Retry
+                </button>
               </div>
             ) : filteredAndSortedRams.length === 0 ? (
               <p className="text-center text-gray-400">
