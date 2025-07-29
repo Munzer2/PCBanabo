@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import CasingSidebar from "../../components/lists/sidebars/CasingSidebar";
 import CasingItem from "../../components/lists/items/CasingItem";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "cpu",
@@ -16,6 +18,8 @@ export default function Casing() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -123,6 +127,12 @@ export default function Casing() {
     }
   };
 
+  // Filter and sort casings based on search term and sort option
+  const filteredAndSortedCasings = useMemo(() => {
+    const filtered = filterComponentsBySearch(casings, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [casings, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       <CasingSidebar onApply={handleApplyFilters} />
@@ -159,15 +169,26 @@ export default function Casing() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available Casings
             </h1>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search casings by name, brand, or series..."
+            />
             {loading ? (
-              <p className="text-center text-gray-400">Loading casings...</p>
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
             ) : error ? (
               <p className="text-center text-red-400">{error}</p>
-            ) : casings.length === 0 ? (
-              <p className="text-center text-gray-400">No casings found.</p>
+            ) : filteredAndSortedCasings.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {casings.length === 0 ? "No casings found." : "No casings match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {casings.map((casing) => (
+                {filteredAndSortedCasings.map((casing) => (
                   <CasingItem 
                     key={casing.id || casing._id} 
                     casing={casing} 

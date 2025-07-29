@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import CPUItem from "../../components/lists/items/CPUItem";
 import CpuSidebar from "../../components/lists/sidebars/CpuSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "cores",
@@ -16,6 +18,9 @@ const sliders = [
 export default function CPU() {
   const [CPUs, setCPUs] = useState([]);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -104,6 +109,7 @@ export default function CPU() {
   useEffect(() => {
     const fetchCPUs = async () => {
       try {
+        setLoading(true);
         // const query = buildQueryParams(filters);
         // const url = Object.keys(filters).length
         //   ? `/api/components/cpus/filtered?${query}`
@@ -124,8 +130,10 @@ export default function CPU() {
         const data = await res.json();
         console.log("CPU Page: Data received:", data.length, "items");
         setCPUs(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching CPUs:", error);
+        setLoading(false);
       }
     };
 
@@ -148,6 +156,12 @@ export default function CPU() {
       });
     }
   };
+
+  // Filter and sort CPUs based on search term and sort option
+  const filteredAndSortedCPUs = useMemo(() => {
+    const filtered = filterComponentsBySearch(CPUs, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [CPUs, searchTerm, sortBy]);
 
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
@@ -185,11 +199,24 @@ export default function CPU() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available CPUs
             </h1>
-            {CPUs.length === 0 ? (
-              <p className="text-center text-gray-400">No CPUs found.</p>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search CPUs by name, brand, or series..."
+            />
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
+            ) : filteredAndSortedCPUs.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {CPUs.length === 0 ? "No CPUs found." : "No CPUs match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {CPUs.map((cpu) => (
+                {filteredAndSortedCPUs.map((cpu) => (
                   <CPUItem 
                     key={cpu.id || cpu._id} 
                     cpu={cpu} 

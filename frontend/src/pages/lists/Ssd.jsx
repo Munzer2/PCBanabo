@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import SsdItem from "../../components/lists/items/SsdItem";
 import SsdSidebar from "../../components/lists/sidebars/SsdSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "price",
@@ -15,6 +17,8 @@ export default function Ssd() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -131,6 +135,12 @@ export default function Ssd() {
     }
   };
 
+  // Filter and sort SSDs based on search term and sort option
+  const filteredAndSortedSsds = useMemo(() => {
+    const filtered = filterComponentsBySearch(ssds, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [ssds, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       {/* Sidebar */}
@@ -173,6 +183,13 @@ export default function Ssd() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available Storage Devices
             </h1>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search SSDs by name, brand, or series..."
+            />
             
             {loading ? (
               <div className="flex justify-center items-center h-64">
@@ -182,9 +199,13 @@ export default function Ssd() {
               <div className="bg-red-900/30 border border-red-800 text-red-200 p-4 rounded-md">
                 <p>{error}</p>
               </div>
+            ) : filteredAndSortedSsds.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {ssds.length === 0 ? "No storage devices found." : "No storage devices match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ssds.map((ssd) => (
+                {filteredAndSortedSsds.map((ssd) => (
                   <SsdItem 
                     key={ssd.id} 
                     ssd={ssd}

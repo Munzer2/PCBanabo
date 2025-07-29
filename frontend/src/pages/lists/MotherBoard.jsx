@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import MotherboardItem from "../../components/lists/items/MotherboardItem";
 import MotherboardSidebar from "../../components/lists/sidebars/MotherboardSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 export default function MotherBoard() {
   const [motherboards, setMotherboards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -140,6 +144,12 @@ export default function MotherBoard() {
     navigate("/login", { replace: true });
   };
 
+  // Filter and sort motherboards based on search term and sort option
+  const filteredAndSortedMotherboards = useMemo(() => {
+    const filtered = filterComponentsBySearch(motherboards, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [motherboards, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       {/* Sidebar */}
@@ -182,6 +192,13 @@ export default function MotherBoard() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available Motherboards
             </h1>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search motherboards by name, brand, or series..."
+            />
 
             {loading ? (
               <div className="flex justify-center items-center h-64">
@@ -191,9 +208,13 @@ export default function MotherBoard() {
               <div className="bg-red-900/30 border border-red-800 text-red-200 p-4 rounded-md">
                 <p>{error}</p>
               </div>
+            ) : filteredAndSortedMotherboards.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {motherboards.length === 0 ? "No motherboards found." : "No motherboards match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {motherboards.map((motherboard) => (
+                {filteredAndSortedMotherboards.map((motherboard) => (
                   <MotherboardItem
                     key={motherboard.id}
                     motherboard={motherboard}

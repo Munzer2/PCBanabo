@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, User, LogOut } from "lucide-react";
 import PsuItem from "../../components/lists/items/PsuItem";
 import PsuSidebar from "../../components/lists/sidebars/PsuSidebar";
+import SearchAndSort from "../../components/common/SearchAndSort";
+import { sortComponents, filterComponentsBySearch } from "../../utils/componentUtils";
 
 const sliders = [
   "price",
@@ -15,6 +17,8 @@ export default function Psu() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -129,6 +133,12 @@ export default function Psu() {
     }
   };
 
+  // Filter and sort PSUs based on search term and sort option
+  const filteredAndSortedPsus = useMemo(() => {
+    const filtered = filterComponentsBySearch(psus, searchTerm);
+    return sortComponents(filtered, sortBy);
+  }, [psus, searchTerm, sortBy]);
+
   return (
     <div className="min-h-screen flex bg-slate-900 text-gray-100">
       {/* Sidebar */}
@@ -171,6 +181,13 @@ export default function Psu() {
             <h1 className="text-3xl font-bold text-center mb-6 text-white">
               Available Power Supplies
             </h1>
+            <SearchAndSort
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              placeholder="Search PSUs by name, brand, or series..."
+            />
             
             {loading ? (
               <div className="flex justify-center items-center h-64">
@@ -180,9 +197,13 @@ export default function Psu() {
               <div className="bg-red-900/30 border border-red-800 text-red-200 p-4 rounded-md">
                 <p>{error}</p>
               </div>
+            ) : filteredAndSortedPsus.length === 0 ? (
+              <p className="text-center text-gray-400">
+                {psus.length === 0 ? "No PSUs found." : "No PSUs match your search."}
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {psus.map((psu) => (
+                {filteredAndSortedPsus.map((psu) => (
                   <PsuItem 
                     key={psu.id} 
                     psu={psu}
