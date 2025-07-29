@@ -181,7 +181,11 @@ export default function Ram() {
               onSortChange={setSortBy}
               placeholder="Search RAM by name, brand, or series..."
             />
-            {filteredAndSortedRams.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
+            ) : filteredAndSortedRams.length === 0 ? (
               <p className="text-center text-gray-400">
                 {rams.length === 0 ? "No RAM modules found." : "No RAM modules match your search."}
               </p>

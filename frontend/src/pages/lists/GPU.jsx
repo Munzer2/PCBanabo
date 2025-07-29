@@ -20,6 +20,7 @@ export default function GPU() {
   const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -86,6 +87,7 @@ export default function GPU() {
   useEffect(() => {
     const fetchGPUs = async () => {
       try {
+        setLoading(true);
         const query = buildQueryParams(filters);
         const url = Object.keys(filters).length
           ? `/api/components/gpus/filtered?${query}`
@@ -96,8 +98,10 @@ export default function GPU() {
         const data = await res.json();
         console.log("Data received from new query:", data);
         setGpus(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching GPUs:", error);
+        setLoading(false);
       }
     };
 
@@ -170,7 +174,11 @@ export default function GPU() {
               onSortChange={setSortBy}
               placeholder="Search GPUs by name, brand, or series..."
             />
-            {filteredAndSortedGPUs.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
+            ) : filteredAndSortedGPUs.length === 0 ? (
               <p className="text-center text-gray-400">
                 {gpus.length === 0 ? "No GPUs found." : "No GPUs match your search."}
               </p>

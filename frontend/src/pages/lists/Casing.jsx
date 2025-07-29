@@ -177,7 +177,9 @@ export default function Casing() {
               placeholder="Search casings by name, brand, or series..."
             />
             {loading ? (
-              <p className="text-center text-gray-400">Loading casings...</p>
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
             ) : error ? (
               <p className="text-center text-red-400">{error}</p>
             ) : filteredAndSortedCasings.length === 0 ? (

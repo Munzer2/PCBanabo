@@ -20,6 +20,7 @@ export default function CPU() {
   const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -108,6 +109,7 @@ export default function CPU() {
   useEffect(() => {
     const fetchCPUs = async () => {
       try {
+        setLoading(true);
         // const query = buildQueryParams(filters);
         // const url = Object.keys(filters).length
         //   ? `/api/components/cpus/filtered?${query}`
@@ -128,8 +130,10 @@ export default function CPU() {
         const data = await res.json();
         console.log("CPU Page: Data received:", data.length, "items");
         setCPUs(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching CPUs:", error);
+        setLoading(false);
       }
     };
 
@@ -202,7 +206,11 @@ export default function CPU() {
               onSortChange={setSortBy}
               placeholder="Search CPUs by name, brand, or series..."
             />
-            {filteredAndSortedCPUs.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+              </div>
+            ) : filteredAndSortedCPUs.length === 0 ? (
               <p className="text-center text-gray-400">
                 {CPUs.length === 0 ? "No CPUs found." : "No CPUs match your search."}
               </p>
