@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronDown, LogOut, RefreshCw, X, Trash2, Home, FolderOpen, Users, Settings, Wrench } from "lucide-react";
+import { ChevronDown, LogOut, RefreshCw, X, Trash2, Home, FolderOpen, Users, Settings, Wrench, BarChart3 } from "lucide-react";
 import api from "../api";
 import ChatSidebar from "../components/ChatBot/ChatSidebar";
 import CustomAlert from "../components/common/CustomAlert";
+import BenchmarkModal from "../components/common/BenchmarkModal";
 
 const MyBuilds = () => {
     const [builds, setBuilds] = useState([]);
@@ -15,7 +16,8 @@ const MyBuilds = () => {
     const [selectedBuild, setSelectedBuild] = useState(null); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [buildDetails, setBuildDetails] = useState(null);
-    const [isLoadingDetails, setIsLoadingDetails] = useState(false); 
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+    const [isBenchmarkModalOpen, setIsBenchmarkModalOpen] = useState(false);
     const navigate = useNavigate();
 
     // Custom Alert states
@@ -390,6 +392,13 @@ const MyBuilds = () => {
 
                     <div className="flex justify-end gap-3 p-6 border-t border-gray-700">
                         <button
+                            onClick={() => setIsBenchmarkModalOpen(true)}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                        >
+                            <BarChart3 className="h-4 w-4" />
+                            View Benchmark Scores
+                        </button>
+                        <button
                             onClick={onClose}
                             className="px-4 py-2 bg-gray-600 text-gray-200 rounded-lg hover:bg-gray-500 transition-colors"
                         >
@@ -503,6 +512,15 @@ const MyBuilds = () => {
         setIsModalOpen(false);
         setSelectedBuild(null);
         setBuildDetails(null);
+    };
+
+    // Benchmark modal functions
+    const closeBenchmarkModal = () => {
+        setIsBenchmarkModalOpen(false);
+    };
+
+    const handleBackToBuildDetails = () => {
+        setIsBenchmarkModalOpen(false);
     };
 
     if (!user) {
@@ -789,6 +807,15 @@ const MyBuilds = () => {
                     <BuildDetailsModal 
                         build={buildDetails || selectedBuild} 
                         onClose={closeModal}
+                    />
+                )}
+
+                {/* Benchmark Modal */}
+                {isBenchmarkModalOpen && (
+                    <BenchmarkModal
+                        build={buildDetails || selectedBuild}
+                        onClose={closeBenchmarkModal}
+                        onBack={handleBackToBuildDetails}
                     />
                 )}
 

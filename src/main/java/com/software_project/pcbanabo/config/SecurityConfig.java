@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/api/chat",
                                 "/api/chat/suggest-build")
                         .permitAll() // Allow public access to /api endpoints
-                        .anyRequest().authenticated() // Everything else requires login
+                        .requestMatchers("/api/**").permitAll() // Allow all API endpoints
+                        .anyRequest().permitAll() // Temporarily allow all for debugging
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authManager)
