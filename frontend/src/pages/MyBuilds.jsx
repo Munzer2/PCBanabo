@@ -365,9 +365,6 @@ const MyBuilds = () => {
                                         <span className="font-medium">Created:</span> {build.savedAt ? new Date(build.savedAt).toLocaleDateString() : 'N/A'}
                                     </p>
                                     <p className="text-gray-200">
-                                        <span className="font-medium">Build ID:</span> {build.id}
-                                    </p>
-                                    <p className="text-gray-200">
                                         <span className="font-medium">Visibility:</span> {build.public ? 'Public' : 'Private'}
                                     </p>
                                     {/* Total Price */}
@@ -465,9 +462,6 @@ const MyBuilds = () => {
                     <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-1 rounded ${build.public ? 'bg-green-600 text-green-100' : 'bg-gray-600 text-gray-300'}`}>
                             {build.public ? 'Public' : 'Private'}
-                        </span>
-                        <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded">
-                            ID: {build.id}
                         </span>
                         <button
                             onClick={handleDelete}

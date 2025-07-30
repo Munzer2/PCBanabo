@@ -205,7 +205,7 @@ const BenchmarkModal = ({ build, onClose, onBack }) => {
                                     <div className="text-right">
                                         <p className="text-sm text-gray-400">Build Configuration</p>
                                         <p className="text-gray-200">
-                                            CPU ID: {benchmarkData.cpuId} | GPU ID: {benchmarkData.gpuId}
+                                            Performance optimized build
                                         </p>
                                     </div>
                                 </div>

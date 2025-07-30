@@ -551,12 +551,6 @@ const Users = () => {
                                             <span className="truncate">{user.email || 'No email'}</span>
                                         </div>
 
-                                        <div className="flex items-center justify-center text-sm text-gray-400">
-                                            <span className="text-xs bg-gray-700 px-2 py-1 rounded">
-                                                ID: {user.id}
-                                            </span>
-                                        </div>
-
                                         {user.userType && (
                                             <div className="flex items-center justify-center">
                                                 <span className="text-xs bg-purple-600 text-purple-100 px-2 py-1 rounded">
