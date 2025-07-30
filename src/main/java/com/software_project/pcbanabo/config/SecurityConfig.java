@@ -32,7 +32,6 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userService);
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
-                .cors(cors -> cors.configure(http)) // Enable CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/components/**",
                                 "/api/benchmarks",
@@ -46,7 +45,8 @@ public class SecurityConfig {
                                 "/api/chat",
                                 "/api/chat/suggest-build")
                         .permitAll() // Allow public access to /api endpoints
-                        .anyRequest().authenticated() // Everything else requires login
+                        .requestMatchers("/api/**").permitAll() // Allow all API endpoints
+                        .anyRequest().permitAll() // Temporarily allow all for debugging
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authManager)
