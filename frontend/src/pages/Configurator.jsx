@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
-import { Computer, ArrowLeft, User, LogOut, Save, Sparkles, X } from 'lucide-react';
+import { Computer, ArrowLeft, User, LogOut, Save, Sparkles, X, Globe, Lock } from 'lucide-react';
 import ComponentSlot from '../components/configurator/ComponentSlot';
 import ChatSidebar from '../components/ChatBot/ChatSidebar';
 import CustomAlert from '../components/common/CustomAlert';
@@ -28,6 +28,7 @@ export default function Configurator() {
   const [hasChanges, setHasChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [buildName, setBuildName] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   
   // AI Build states
@@ -233,7 +234,7 @@ export default function Configurator() {
         casingId:    buildData.components.casing, 
         cpuCoolerId:    buildData.components.cpuCooler,
         buildName:      buildName.trim(),
-        public:       true 
+        public:       isPublic 
       };
 
       console.log(dto);
@@ -415,6 +416,7 @@ export default function Configurator() {
       () => {
         setComponents(initialComponents);
         setBuildName('');
+        setIsPublic(true);
         setHasChanges(false);
         showSuccess('All components have been cleared successfully.');
       },
@@ -525,6 +527,42 @@ export default function Configurator() {
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {buildName.length}/100 characters
+                </p>
+              </div>
+            </div>
+
+            {/* Public/Private Setting */}
+            <div className="mb-6 sm:mb-8">
+              <div className="max-w-md mx-auto">
+                <div className="flex items-center justify-center p-4 bg-slate-800 rounded-lg border border-gray-600">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isPublic"
+                      checked={isPublic}
+                      onChange={(e) => setIsPublic(e.target.checked)}
+                      className="h-4 w-4 text-blue-600 bg-slate-700 border-gray-500 rounded focus:ring-blue-500 focus:ring-2"
+                    />
+                    <label htmlFor="isPublic" className="ml-3 flex items-center text-sm font-medium text-gray-300">
+                      {isPublic ? (
+                        <Globe size={16} className="mr-2 text-green-400" />
+                      ) : (
+                        <Lock size={16} className="mr-2 text-gray-400" />
+                      )}
+                      Make this build public
+                    </label>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  {isPublic ? (
+                    <span className="text-green-400">
+                      ✓ Other users can view and discover your build
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">
+                      🔒 Only you can see this build
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

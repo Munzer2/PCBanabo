@@ -367,9 +367,6 @@ const Builds = () => {
                                     <p className="text-gray-200">
                                         <span className="font-medium">Created:</span> {build.savedAt ? new Date(build.savedAt).toLocaleDateString() : 'N/A'}
                                     </p>
-                                    <p className="text-gray-200">
-                                        <span className="font-medium">Build ID:</span> {build.id}
-                                    </p>
                                     {(() => {
                                         const totalPrice = 
                                             (build.cpu ? (build.cpu.average_price || build.cpu.avg_price || build.cpu.price || 0) : 0) +
@@ -465,9 +462,6 @@ const Builds = () => {
             <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-semibold text-gray-100 flex-1">{build.buildName}</h3>
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded">
-                        ID: {build.id}
-                    </span>
                     <button
                         onClick={handleDelete}
                         className="p-1 text-gray-400 hover:text-red-400 transition-colors"
