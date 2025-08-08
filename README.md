@@ -2,20 +2,20 @@
 
 A comprehensive PC building configurator and community platform that helps users build their dream PC with AI assistance, benchmark analysis, community sharing, and automated component data scraping.
 
-![Dashboard](Dashboard.png)
+![Dashboard](images/Dashboard.png)
 
 ## ✨ Features
 
 ### 🤖 AI-Powered Build Generation
 Get personalized PC build recommendations based on your budget, use case, and preferences.
 
-![AI Build](AI_Build_prompt.png)
-![AI Built PC](AI_Built_PC.png)
+![AI Build](images/AI_Build_prompt.png)
+![AI Built PC](images/AI_Built_PC.png)
 
 ### 🛠️ Interactive Configurator
 Build your PC step-by-step with real-time compatibility checking and price tracking.
 
-![Configurator](Configurator.png)
+![Configurator](images/Configurator.png)
 
 ### 📊 Benchmark Analysis
 View detailed performance benchmarks for gaming, creative work, and productivity tasks with intelligent benchmark combination for CPU+GPU configurations.
@@ -36,13 +36,13 @@ Real-time component data collection from major PC hardware retailers:
 - Browse community builds for inspiration
 - User profiles and build showcases
 
-![All Builds](AllBuilds.png)
-![My Builds](MyBuilds.png)
+![All Builds](images/AllBuilds.png)
+![My Builds](images/MyBuilds.png)
 
 ### 🔍 Component Browser
 Explore extensive database of PC components with detailed specifications and real-time pricing.
 
-![Browse Components](BrowseComponents.png)
+![Browse Components](images/BrowseComponents.png)
 
 ## 🚀 Getting Started
 
@@ -264,7 +264,7 @@ psql -U pcbanabo_user -d pcbanabo -f db-init/init.sql
 ## 📱 Screenshots
 
 ### Authentication
-![Sign In](SignIn.png)
+![Sign In](images/SignIn.png)
 
 ### User Management
 Browse and connect with other PC builders in the community.
