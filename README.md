@@ -268,8 +268,6 @@ psql -U pcbanabo_user -d pcbanabo -f db-init/init.sql
 ### Authentication
 ![Sign In](images/SignIn.png)
 
-### User Management
-Browse and connect with other PC builders in the community.
 
 ## 🔧 Configuration
 
@@ -335,10 +333,6 @@ Detailed API documentation is available in [`pcbanabo_api_documentation.md`](pcb
 - `GET /api/users` - Get all users
 - `GET /api/users/{id}` - Get user by ID
 
-### Benchmark API Features
-- **Smart Benchmark Combination**: Automatically combines CPU and GPU benchmarks when exact matches aren't available
-- **Bottleneck Detection**: Uses minimum performance values for applications that depend on both CPU and GPU
-- **Fallback Strategy**: Gracefully handles missing benchmark data with intelligent defaults
 
 ## 🕷️ Web Scraping Details
 
@@ -388,26 +382,6 @@ Detailed API documentation is available in [`pcbanabo_api_documentation.md`](pcb
 5. **Database Integration**: Upsert operations to prevent duplicates
 6. **Price Tracking**: Historical pricing data collection
 
-## 🧪 Testing
-
-### Backend Tests
-```bash
-./mvnw test
-```
-
-### Frontend Tests  
-```bash
-cd frontend
-npm run test
-```
-
-### End-to-End Tests
-```bash
-cd frontend
-npm run test:e2e
-```
-
-Note: Scraper testing classes exist but may need individual testing setup with WebDriver configuration.
 
 ## 🚀 Deployment
 
@@ -456,21 +430,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙋‍♂️ Support
 
 For questions and support, please open an issue on GitHub or contact the development team.
-
-## 🔮 Roadmap
-
-- [ ] Mobile application
-- [ ] Advanced AI recommendations with better context
-- [ ] Real-time price tracking with alerts  
-- [ ] Component availability notifications
-- [ ] Build comparison tools
-- [ ] VR/AR build visualization
-- [ ] Additional retailer integrations
-- [ ] International pricing support
-- [ ] Advanced benchmark analytics
-- [ ] Component compatibility verification
-- [ ] Admin dashboard for scraping management
-- [ ] Direct scraping trigger endpoints
 
 ---
 
