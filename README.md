@@ -20,6 +20,8 @@ Build your PC step-by-step with real-time compatibility checking and price track
 ### 📊 Benchmark Analysis
 View detailed performance benchmarks for gaming, creative work, and productivity tasks with intelligent benchmark combination for CPU+GPU configurations.
 
+![Benchmarks](images/Benchmarks.png)
+
 ### 🕷️ Automated Component Scraping
 Real-time component data collection from major PC hardware retailers:
 
