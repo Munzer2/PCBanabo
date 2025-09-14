@@ -423,10 +423,6 @@ When contributing to scraping functionality:
 - Handle errors gracefully with proper logging
 - Test scraping logic thoroughly before deployment
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙋‍♂️ Support
 
 For questions and support, please open an issue on GitHub or contact the development team.
